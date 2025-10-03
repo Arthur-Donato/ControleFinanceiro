@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.UUID;
+
 @Entity
 @Table(name = "TB_CATEGORY")
 public class CategoryEntity {
@@ -12,7 +14,7 @@ public class CategoryEntity {
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Setter
     @Getter
-    public Integer ID;
+    public UUID ID;
 
     @Column(nullable = false)
     @Setter

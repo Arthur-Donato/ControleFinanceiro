@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.Date;
+import java.util.UUID;
 
 @Entity
 @Table(name = "TB_TRANSACTION")
@@ -14,7 +15,7 @@ public class TransactionEntity {
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Setter
     @Getter
-    private Integer ID;
+    private UUID ID;
 
     @Column(nullable = false)
     @Setter

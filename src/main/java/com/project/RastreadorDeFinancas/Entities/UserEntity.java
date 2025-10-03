@@ -1,5 +1,6 @@
 package com.project.RastreadorDeFinancas.Entities;
 
+import jakarta.annotation.Nonnull;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -42,7 +43,7 @@ public class UserEntity {
     @Getter
     private List<CategoryEntity> categories;
 
-    public UserEntity(String CPF, String name, String email, String password){
+    public UserEntity(@Nonnull String CPF, @Nonnull String name, @Nonnull String email, @Nonnull String password){
         this.CPF = CPF;
         this.name= name;
         this.email = email;
