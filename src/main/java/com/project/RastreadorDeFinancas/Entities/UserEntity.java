@@ -4,14 +4,27 @@ import jakarta.annotation.Nonnull;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.hateoas.RepresentationModel;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.List;
+import java.util.UUID;
 
 @Entity
 @Table(name = "TB_USERS")
-public class UserEntity {
+public class UserEntity extends RepresentationModel<UserEntity> implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 1L;
 
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Setter
+    @Getter
+    private UUID ID;
+
+
     @Setter
     @Getter
     private String CPF;
