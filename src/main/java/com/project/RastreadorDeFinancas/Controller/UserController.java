@@ -1,14 +1,16 @@
 package com.project.RastreadorDeFinancas.Controller;
 
+import com.project.RastreadorDeFinancas.Dtos.UserRecordDto;
 import com.project.RastreadorDeFinancas.Entities.UserEntity;
 import com.project.RastreadorDeFinancas.Repository.UserRepository;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.hateoas.Link;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -52,5 +54,29 @@ public class UserController {
         }
 
         return ResponseEntity.ok(userList);
+    }
+
+    @PostMapping
+    public ResponseEntity<UserEntity> postUser(@RequestBody @Validated UserRecordDto userRecordDto){
+        var newUser = new UserEntity();
+        BeanUtils.copyProperties(userRecordDto, newUser);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(userRepository.save(newUser));
+    }
+
+    @DeleteMapping(path = "/delete/{id}")
+    public ResponseEntity<String> deleteUser(@PathVariable(value = "id")UUID id){
+        //VERIFICAR SE O USUARIO EXISTE E EXCLUIR ELE DO BANCO DE DADOS
+
+        Optional<UserEntity> userDelete = this.userRepository.findById(id);
+
+        if(userDelete.isPresent()){
+            //EXISTE UM USUARIO PARA SER EXCLUIDO DO BANDO DE DADOS
+            this.userRepository.deleteById(id);
+
+            return ResponseEntity.status(HttpStatus.OK).body("O usuário foi deletado com sucesso");
+        }
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Não foi encontrado nenhum usuário com esse id");
     }
 }
