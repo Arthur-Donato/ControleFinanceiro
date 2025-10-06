@@ -20,11 +20,13 @@ public class UserEntity extends RepresentationModel<UserEntity> implements Seria
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(nullable = false, unique = true)
     @Setter
     @Getter
     private UUID ID;
 
 
+    @Column(nullable = false, unique = true)
     @Setter
     @Getter
     private String CPF;
@@ -50,8 +52,7 @@ public class UserEntity extends RepresentationModel<UserEntity> implements Seria
     @Getter
     private List<TransactionEntity> transactions;
 
-    @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_CPF")
+    @OneToMany(mappedBy = "userEntity", cascade = CascadeType.ALL,orphanRemoval = true, fetch = FetchType.LAZY)
     @Setter
     @Getter
     private List<CategoryEntity> categories;

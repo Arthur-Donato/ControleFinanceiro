@@ -12,6 +12,7 @@ public class CategoryEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(nullable = false, unique = true)
     @Setter
     @Getter
     public UUID ID;
@@ -20,6 +21,12 @@ public class CategoryEntity {
     @Setter
     @Getter
     public String name;
+
+    @ManyToOne
+    @JoinColumn(name = "cpf_user")
+    @Setter
+    @Getter
+    private UserEntity userEntity;
 
     public CategoryEntity(String name){
         this.name = name;
