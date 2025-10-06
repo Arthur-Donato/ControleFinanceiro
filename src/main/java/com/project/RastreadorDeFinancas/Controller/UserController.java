@@ -79,4 +79,26 @@ public class UserController {
 
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Não foi encontrado nenhum usuário com esse id");
     }
+
+    @PutMapping(path = "/put/{id}")
+    public ResponseEntity<Object> editUser(@PathVariable (value = "id") UUID id, @RequestBody @Validated UserRecordDto userRecordDto){
+        Optional<UserEntity> userFind = this.userRepository.findById(id);
+
+        if(userFind.isPresent()){
+            //SUBSTITUIR AS INFORMACOES DE UM USUARIO JA EXISTENTE E NAO CRIAR OUTRO USUARIO
+            //ESSE RACIOCINIO NAO POSSO UTILIZAR
+            UserEntity userEdit = userFind.get();
+
+            userEdit.setCPF(userRecordDto.CPF());
+            userEdit.setName(userRecordDto.name());
+            userEdit.setEmail(userRecordDto.email());
+            userEdit.setPassword(userRecordDto.password());
+
+            return ResponseEntity.status(HttpStatus.OK).body(this.userRepository.save(userEdit));
+
+        }
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("O usuário em questão não foi encontrado!");
+
+    }
 }
