@@ -37,6 +37,12 @@ public class TransactionEntity {
     @Getter
     private Date date;
 
+    @ManyToOne
+    @JoinColumn(nullable = false, unique = true, name = "category_Name")
+    @Setter
+    @Getter
+    private CategoryEntity categoryName;
+
     public TransactionEntity(String type, Double value, String description, Date date){
         this.type = type;
         this.value = value;

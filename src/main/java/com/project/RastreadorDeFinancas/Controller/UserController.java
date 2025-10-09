@@ -20,7 +20,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
 @RequestMapping("/user")
-public class UserController {
+public class    UserController {
     private final UserRepository userRepository;
 
     @Autowired

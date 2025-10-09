@@ -1,5 +1,6 @@
 package com.project.RastreadorDeFinancas.Entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.annotation.Nonnull;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -14,6 +15,7 @@ import java.util.UUID;
 @Entity
 @Table(name = "TB_USERS")
 public class UserEntity extends RepresentationModel<UserEntity> implements Serializable {
+
 
     @Serial
     private static final long serialVersionUID = 1L;
@@ -48,14 +50,17 @@ public class UserEntity extends RepresentationModel<UserEntity> implements Seria
 
     @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_CPF")
+    @JsonIgnore
     @Setter
     @Getter
     private List<TransactionEntity> transactions;
 
     @OneToMany(mappedBy = "userEntity", cascade = CascadeType.ALL,orphanRemoval = true, fetch = FetchType.LAZY)
+    @JsonIgnore
     @Setter
     @Getter
     private List<CategoryEntity> categories;
+
 
     public UserEntity(@Nonnull String CPF, @Nonnull String name, @Nonnull String email, @Nonnull String password){
         this.CPF = CPF;
