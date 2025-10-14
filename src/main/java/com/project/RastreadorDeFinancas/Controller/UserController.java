@@ -2,7 +2,11 @@ package com.project.RastreadorDeFinancas.Controller;
 
 import com.project.RastreadorDeFinancas.Dtos.UserRecordDto;
 import com.project.RastreadorDeFinancas.Entities.UserEntity;
+import com.project.RastreadorDeFinancas.Exceptions.UserNotFoundException;
 import com.project.RastreadorDeFinancas.Repository.UserRepository;
+import com.project.RastreadorDeFinancas.Services.UserService;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -21,84 +25,70 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 @RestController
 @RequestMapping("/user")
 public class    UserController {
-    private final UserRepository userRepository;
+    
+    @Setter
+    @Getter
+    private UserService userService;
 
     @Autowired
     public UserController(UserRepository userRepository){
-        this.userRepository = userRepository;
+        this.userService = new UserService(userRepository);
     }
 
 
     @GetMapping(path = "/{id}")
-    public ResponseEntity<Object> getUserById(@PathVariable(value = "id") UUID id){
-        Optional<UserEntity> userByID = this.userRepository.findById(id);
+    public ResponseEntity<UserEntity> getUserById(@PathVariable(value = "id") UUID id){
+        Optional<UserEntity> userEntity = userService.getOneUserById(id);
 
-        if(userByID.isEmpty()){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuario nao foi encontrada");
+        if(userEntity.isPresent()){
+            return ResponseEntity.status(HttpStatus.OK).body(userEntity.get());
         }
         else{
-            userByID.get().add(linkTo(methodOn(UserController.class).getAllUsers()).withSelfRel());
-            return ResponseEntity.status(HttpStatus.OK).body(userByID.get());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
 
     @GetMapping
     public ResponseEntity<List<UserEntity>> getAllUsers(){
-        //TODO: Fazer uma consulta no banco de dados e retornar todos os usuarios
-        List<UserEntity> userList = userRepository.findAll();
+        List<UserEntity> usersList = userService.getAllUsers();
 
-        if(!userList.isEmpty()){
-            for(UserEntity user : userList){
-                user.add(linkTo(methodOn(UserController.class).getUserById(user.getID())).withSelfRel());
-            }
+        if(!usersList.isEmpty()){
+            return ResponseEntity.status(HttpStatus.OK).body(usersList);
+        }
+        else{
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
 
-        return ResponseEntity.ok(userList);
     }
 
     @PostMapping
     public ResponseEntity<UserEntity> postUser(@RequestBody @Validated UserRecordDto userRecordDto){
-        var newUser = new UserEntity();
-        BeanUtils.copyProperties(userRecordDto, newUser);
+        UserEntity newUser = userService.createNewUser(userRecordDto);
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(userRepository.save(newUser));
+        return ResponseEntity.status(HttpStatus.CREATED).body(newUser);
     }
 
     @DeleteMapping(path = "/delete/{id}")
     public ResponseEntity<String> deleteUser(@PathVariable(value = "id")UUID id){
-        //VERIFICAR SE O USUARIO EXISTE E EXCLUIR ELE DO BANCO DE DADOS
+        try{
 
-        Optional<UserEntity> userDelete = this.userRepository.findById(id);
+            userService.deleteUser(id);
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 
-        if(userDelete.isPresent()){
-            //EXISTE UM USUARIO PARA SER EXCLUIDO DO BANDO DE DADOS
-            this.userRepository.deleteById(id);
-
-            return ResponseEntity.status(HttpStatus.OK).body("O usuário foi deletado com sucesso");
+        }catch(UserNotFoundException e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
-
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Não foi encontrado nenhum usuário com esse id");
     }
 
     @PutMapping(path = "/put/{id}")
     public ResponseEntity<Object> editUser(@PathVariable (value = "id") UUID id, @RequestBody @Validated UserRecordDto userRecordDto){
-        Optional<UserEntity> userFind = this.userRepository.findById(id);
 
-        if(userFind.isPresent()){
-            //SUBSTITUIR AS INFORMACOES DE UM USUARIO JA EXISTENTE E NAO CRIAR OUTRO USUARIO
-            //ESSE RACIOCINIO NAO POSSO UTILIZAR
-            UserEntity userEdit = userFind.get();
+        try{
+            UserEntity user = userService.editUser(id, userRecordDto);
 
-            userEdit.setCPF(userRecordDto.CPF());
-            userEdit.setName(userRecordDto.name());
-            userEdit.setEmail(userRecordDto.email());
-            userEdit.setPassword(userRecordDto.password());
-
-            return ResponseEntity.status(HttpStatus.OK).body(this.userRepository.save(userEdit));
-
+            return ResponseEntity.status(HttpStatus.OK).body(user);
+        } catch(UserNotFoundException e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
-
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("O usuário em questão não foi encontrado!");
-
     }
 }

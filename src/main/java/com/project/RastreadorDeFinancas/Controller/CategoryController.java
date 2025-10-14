@@ -2,6 +2,7 @@ package com.project.RastreadorDeFinancas.Controller;
 
 import com.project.RastreadorDeFinancas.Dtos.CategoryRecordDto;
 import com.project.RastreadorDeFinancas.Entities.CategoryEntity;
+import com.project.RastreadorDeFinancas.Entities.UserEntity;
 import com.project.RastreadorDeFinancas.Repository.CategoryRepository;
 import com.project.RastreadorDeFinancas.Repository.UserRepository;
 import lombok.Getter;
@@ -88,14 +89,15 @@ public class CategoryController {
 
 
     @PostMapping
-    public ResponseEntity<CategoryEntity> postCategory(@PathVariable (value = "idUser") UUID id, @RequestBody @Validated CategoryRecordDto categoryRecordDto){
+    public ResponseEntity<CategoryEntity> postCategory(@PathVariable (value = "idUser") UUID idUser, @RequestBody @Validated CategoryRecordDto categoryRecordDto){
 
         CategoryEntity categoryEntity = new CategoryEntity();
 
         BeanUtils.copyProperties(categoryRecordDto, categoryEntity);
 
-        categoryEntity.setUserEntity(this.userRepository.getById(id));
+        UserEntity user = this.userRepository.getById(idUser);
 
+        categoryEntity.setUserEntity(user);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(this.categoryRepository.save(categoryEntity));
     }
@@ -118,5 +120,28 @@ public class CategoryController {
         }
 
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("There isn`t a category with this ID");
+    }
+
+    @PutMapping(path =  "/{id}")
+    public ResponseEntity<Object> editCategory(@PathVariable (value = "idUser") UUID idUser, @PathVariable (value = "id") UUID id, CategoryRecordDto categoryRecordDto){
+        Optional<CategoryEntity> possibleCategory = this.categoryRepository.findById(id);
+
+        if(possibleCategory.isPresent()){
+            CategoryEntity category = possibleCategory.get();
+
+            if(category.getUserEntity().getID().equals(idUser)){
+                CategoryEntity categoryAux = new CategoryEntity();
+
+                BeanUtils.copyProperties(categoryRecordDto, categoryAux);
+
+                category.setName(categoryAux.getName()); // MUDANDO APENAS O NOME DA CATEGORIA SEM ALTERAR O ID 
+
+                return ResponseEntity.status(HttpStatus.OK).body(this.categoryRepository.save(category));
+            }
+
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("This category dont belong to the current user");
+        }
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("There isn`t any category with this ID");
     }
 }

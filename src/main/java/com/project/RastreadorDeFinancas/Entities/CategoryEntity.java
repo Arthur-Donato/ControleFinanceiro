@@ -1,5 +1,6 @@
 package com.project.RastreadorDeFinancas.Entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -30,17 +31,12 @@ public class CategoryEntity extends RepresentationModel<CategoryEntity> implemen
     @Getter
     public String name;
 
-    @ManyToOne
-    @JoinColumn(name = "cpf_user")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_ID")
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     @Setter
     @Getter
     private UserEntity userEntity;
-
-    @OneToMany(mappedBy = "categoryName", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true) // UMA CATEGORIA ESTA ASSOCIADA A MUITAS TRANSACOES, ASSIM SE FORMA UM ONE TO MANY
-    @Setter
-    @Getter
-    private List<TransactionEntity> transactionsList;
 
     public CategoryEntity(String name){
         this.name = name;

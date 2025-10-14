@@ -9,5 +9,5 @@ import java.util.UUID;
 
 @Repository
 public interface UserRepository extends JpaRepository<UserEntity, UUID> {
-    List<UserEntity> getByCPF(String cpf);
+    UserEntity getByCPF(String cpf);
 }
