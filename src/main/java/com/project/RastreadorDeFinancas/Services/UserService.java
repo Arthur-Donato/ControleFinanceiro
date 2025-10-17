@@ -92,4 +92,15 @@ public class UserService {
         throw new UserNotFoundException("There isn`t any user with this ID");
     }
 
+    public UserEntity verifyAndReturnUser(UUID idUser) throws UserNotFoundException{
+        Optional<UserEntity> possibleUser = this.userRepository.findById(idUser);
+
+        if(possibleUser.isPresent()){
+            return possibleUser.get();
+        }
+        else{
+            throw new UserNotFoundException("There aren`t any user with this ID");
+        }
+    }
+
 }
