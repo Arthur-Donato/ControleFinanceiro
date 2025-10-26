@@ -46,7 +46,8 @@ public class SecurityConfig {
         httpSecurity.csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/user/**").hasRole("ADMIN")
-                        .requestMatchers("/category/**").hasRole("ADMIN").anyRequest().authenticated()
+                        .requestMatchers("/category/**").hasRole("ADMIN")
+                        .requestMatchers("/transaction/**").hasRole("ADMIN").anyRequest().authenticated()
 
                 ).httpBasic(withDefaults());
 

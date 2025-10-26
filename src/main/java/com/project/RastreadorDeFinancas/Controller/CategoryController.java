@@ -1,8 +1,8 @@
 package com.project.RastreadorDeFinancas.Controller;
 
-import com.project.RastreadorDeFinancas.Dtos.CategoryRecordDto;
+import com.project.RastreadorDeFinancas.Dtos.CategoryResponseDto;
+import com.project.RastreadorDeFinancas.Dtos.CreateCategoryDto;
 import com.project.RastreadorDeFinancas.Entities.CategoryEntity;
-import com.project.RastreadorDeFinancas.Exceptions.CategoryDontBelongToThisUserException;
 import com.project.RastreadorDeFinancas.Exceptions.CategoryNotFoundException;
 import com.project.RastreadorDeFinancas.Exceptions.UserNotFoundException;
 import com.project.RastreadorDeFinancas.Repository.CategoryRepository;
@@ -19,9 +19,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.UUID;
 
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
-
 @RestController
 @RequestMapping(path = "/category/{idUser}")
 public class CategoryController {
@@ -35,63 +32,69 @@ public class CategoryController {
         this.categoryService = new CategoryService(userRepository, categoryRepository);
     }
 
-    @GetMapping(path = "/{id}")
-    public ResponseEntity<Object> getOneCategory(@PathVariable(value = "id") UUID id, @PathVariable (value = "idUser") UUID idUser){
-
-        try{
-            CategoryEntity category = categoryService.getOneCategory(idUser, id);
-
-            category.add(linkTo(methodOn(CategoryController.class).getAllCategories(idUser)).withSelfRel());
-
-            return ResponseEntity.status(HttpStatus.OK).body(category);
-        }
-        catch(CategoryNotFoundException | CategoryDontBelongToThisUserException e){
-
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }
-
-    }
-
-    @GetMapping
-    public ResponseEntity<Object> getAllCategories(@PathVariable (value = "idUser") UUID idUser){
-        List<CategoryEntity>  categoryList = categoryService.getAllCategories(idUser);
-
-        return ResponseEntity.status(HttpStatus.OK).body(categoryList);
-    }
-
-
     @PostMapping
-    public ResponseEntity<CategoryEntity> postCategory(@PathVariable (value = "idUser") UUID idUser, @RequestBody @Validated CategoryRecordDto categoryRecordDto){
+    public ResponseEntity<CategoryResponseDto> postCategory(@PathVariable (value = "idUser") UUID idUser, @RequestBody @Validated CreateCategoryDto createCategoryDto){
         try{
-            CategoryEntity category = categoryService.createNewCategory(categoryRecordDto, idUser);
+            CategoryEntity category = categoryService.createNewCategory(createCategoryDto, idUser);
 
-            return ResponseEntity.status(HttpStatus.OK).body(category);
+            CategoryResponseDto categoryResponseDto = new CategoryResponseDto(category);
+
+            return ResponseEntity.status(HttpStatus.OK).body(categoryResponseDto);
         }
         catch(UserNotFoundException e ){
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
     }
 
+    @GetMapping(path = "/{id}")
+    public ResponseEntity<CategoryResponseDto> getOneCategoryById(@PathVariable(value = "idUser") UUID idUser, @PathVariable (value = "id") UUID id){
+        try{
+            CategoryEntity category = categoryService.getOneCategory(idUser, id);
+
+            CategoryResponseDto categoryResponseDto = new CategoryResponseDto(category);
+
+            return ResponseEntity.status(HttpStatus.OK).body(categoryResponseDto);
+        }
+        catch(CategoryNotFoundException | UserNotFoundException e){
+
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+    }
+
+    @GetMapping
+    public ResponseEntity<List<CategoryResponseDto>> getAllCategories(@PathVariable (value = "idUser") UUID idUser){
+        try{
+            List<CategoryResponseDto> categoryList = this.categoryService.getAllCategories(idUser).stream().map(CategoryResponseDto::new).toList();
+
+            return ResponseEntity.status(HttpStatus.OK).body(categoryList);
+        } catch(UserNotFoundException e){
+
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+    }
+
     @DeleteMapping(path = "/{id}/delete")
-    public ResponseEntity<Object> deleteCategory(@PathVariable (value = "idUser") UUID idUser, @PathVariable (value = "id") UUID id ){
+    public ResponseEntity<CategoryResponseDto> deleteCategory(@PathVariable (value = "idUser") UUID idUser, @PathVariable (value = "id") UUID id ){
         try{
             categoryService.deleteCategory(idUser, id);
 
-            return ResponseEntity.status(HttpStatus.OK).build();
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         }
-        catch(CategoryNotFoundException | CategoryDontBelongToThisUserException e){
+        catch(CategoryNotFoundException | UserNotFoundException e){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
 
     @PutMapping(path =  "/{id}")
-    public ResponseEntity<Object> editCategory(@PathVariable (value = "idUser") UUID idUser, @PathVariable (value = "id") UUID id, CategoryRecordDto categoryRecordDto){
+    public ResponseEntity<CategoryResponseDto> updateCategory(@PathVariable (value = "idUser") UUID idUser, @PathVariable (value = "id") UUID id, CreateCategoryDto createCategoryDto){
         try{
-            CategoryEntity category = categoryService.editCategory(idUser, id, categoryRecordDto);
+            CategoryEntity category = categoryService.editCategory(idUser, id, createCategoryDto);
 
-            return ResponseEntity.status(HttpStatus.OK).body(category);
+            CategoryResponseDto categoryResponseDto = new CategoryResponseDto(category);
+
+            return ResponseEntity.status(HttpStatus.OK).body(categoryResponseDto);
         }
-        catch(CategoryNotFoundException | CategoryDontBelongToThisUserException e){
+        catch(CategoryNotFoundException | UserNotFoundException e){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }

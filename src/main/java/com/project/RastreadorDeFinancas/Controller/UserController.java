@@ -1,13 +1,13 @@
 package com.project.RastreadorDeFinancas.Controller;
 
-import com.project.RastreadorDeFinancas.Dtos.UserRecordDto;
+import com.project.RastreadorDeFinancas.Dtos.CreateUserDto;
+import com.project.RastreadorDeFinancas.Dtos.UserResponseDto;
 import com.project.RastreadorDeFinancas.Entities.UserEntity;
 import com.project.RastreadorDeFinancas.Exceptions.UserNotFoundException;
 import com.project.RastreadorDeFinancas.Repository.UserRepository;
 import com.project.RastreadorDeFinancas.Services.UserService;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.http.HttpStatus;
@@ -16,11 +16,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
-
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
 @RequestMapping("/user")
@@ -35,43 +31,43 @@ public class    UserController {
         this.userService = new UserService(userRepository);
     }
 
+    @PostMapping
+    public ResponseEntity<UserResponseDto> postUser(@RequestBody @Validated CreateUserDto createUserDto){
+        UserEntity newUser = userService.createNewUser(createUserDto);
+
+        UserResponseDto userResponseDto = new UserResponseDto(newUser);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(userResponseDto);
+    }
 
     @GetMapping(path = "/{id}")
-    public ResponseEntity<UserEntity> getUserById(@PathVariable(value = "id") UUID id){
-        Optional<UserEntity> userEntity = userService.getOneUserById(id);
+    public ResponseEntity<UserResponseDto> getOneUserById(@PathVariable(value = "id") UUID id){
+        try{
+            UserEntity user = this.userService.getOneUser(id);
 
-        if(userEntity.isPresent()){
-            return ResponseEntity.status(HttpStatus.OK).body(userEntity.get());
-        }
-        else{
+            UserResponseDto userResponseDto = new UserResponseDto(user);
+
+            return ResponseEntity.status(HttpStatus.OK).body(userResponseDto);
+        } catch(UserNotFoundException e){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
     }
 
     @GetMapping
-    public ResponseEntity<List<UserEntity>> getAllUsers(){
-        List<UserEntity> usersList = userService.getAllUsers();
+    public ResponseEntity<List<UserResponseDto>> getAllUsers(){
+        try{
+            List<UserResponseDto> userList = this.userService.getAllUsers().stream().map(UserResponseDto::new).toList();
 
-        if(!usersList.isEmpty()){
-            return ResponseEntity.status(HttpStatus.OK).body(usersList);
-        }
-        else{
+            return ResponseEntity.status(HttpStatus.OK).body(userList);
+        } catch(UserNotFoundException e){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
 
     }
 
-    @PostMapping
-    public ResponseEntity<UserEntity> postUser(@RequestBody @Validated UserRecordDto userRecordDto){
-        UserEntity newUser = userService.createNewUser(userRecordDto);
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(newUser);
-    }
-
     @DeleteMapping(path = "/delete/{id}")
-    public ResponseEntity<String> deleteUser(@PathVariable(value = "id")UUID id){
+    public ResponseEntity<UserResponseDto> deleteUser(@PathVariable(value = "id")UUID id){
         try{
-
             userService.deleteUser(id);
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 
@@ -81,12 +77,13 @@ public class    UserController {
     }
 
     @PutMapping(path = "/put/{id}")
-    public ResponseEntity<Object> editUser(@PathVariable (value = "id") UUID id, @RequestBody @Validated UserRecordDto userRecordDto){
-
+    public ResponseEntity<UserResponseDto> updateUser(@PathVariable (value = "id") UUID id, @RequestBody @Validated CreateUserDto createUserDto){
         try{
-            UserEntity user = userService.editUser(id, userRecordDto);
+            UserEntity user = userService.editUser(id, createUserDto);
 
-            return ResponseEntity.status(HttpStatus.OK).body(user);
+            UserResponseDto userResponseDto = new UserResponseDto(user);
+
+            return ResponseEntity.status(HttpStatus.OK).body(userResponseDto);
         } catch(UserNotFoundException e){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }

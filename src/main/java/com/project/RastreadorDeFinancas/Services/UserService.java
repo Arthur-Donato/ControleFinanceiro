@@ -1,14 +1,13 @@
 package com.project.RastreadorDeFinancas.Services;
 
 import com.project.RastreadorDeFinancas.Controller.UserController;
-import com.project.RastreadorDeFinancas.Dtos.UserRecordDto;
+import com.project.RastreadorDeFinancas.Dtos.CreateUserDto;
 import com.project.RastreadorDeFinancas.Entities.UserEntity;
 import com.project.RastreadorDeFinancas.Exceptions.UserNotFoundException;
 import com.project.RastreadorDeFinancas.Repository.UserRepository;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -27,55 +26,62 @@ public class UserService {
     @Getter
     private UserRepository userRepository;
 
-    @Autowired
-    public UserService(UserRepository userRepository){
+    public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
-    public UserEntity createNewUser(@RequestBody @Validated UserRecordDto userRecordDto){
-        UserEntity newUser  = new UserEntity();
+    public UserEntity createNewUser(@RequestBody @Validated CreateUserDto createUserDto) {
+        UserEntity newUser = new UserEntity();
 
-        BeanUtils.copyProperties(userRecordDto, newUser);
+        BeanUtils.copyProperties(createUserDto, newUser);
 
         this.userRepository.save(newUser);
 
         return newUser;
     }
 
-    public List<UserEntity> getAllUsers(){
-        List<UserEntity> usersList = this.userRepository.findAll();
+    public List<UserEntity> getAllUsers() {
+        List<UserEntity> userList = this.userRepository.findAll();
 
-        if(!usersList.isEmpty()){
-            for(UserEntity user : usersList) {
-                user.add(linkTo(methodOn(UserController.class).getUserById(user.getID())).withSelfRel());
+        if (!userList.isEmpty()) {
+            for (UserEntity user : userList) {
+                user.add(linkTo(methodOn(UserController.class).getOneUserById(user.getID())).withSelfRel());
             }
+
+            return userList;
+        } else {
+            throw new UserNotFoundException();
         }
-
-        return usersList;
     }
 
-    public Optional<UserEntity> getOneUserById(UUID idUser){
-        return userRepository.findById(idUser);
-    }
+    public UserEntity getOneUser(UUID idUser) throws UserNotFoundException{
+        Optional<UserEntity> possibleUser = this.userRepository.findById(idUser);
 
+        if(possibleUser.isPresent()){
+            return possibleUser.get();
+        }
+        else{
+            throw new UserNotFoundException("There aren`t any user with this ID");
+        }
+    }
 
     public void deleteUser(UUID idUser) throws UserNotFoundException {
         Optional<UserEntity> user = this.userRepository.findById(idUser);
 
-        if(user.isPresent()){
+        if (user.isPresent()) {
             this.userRepository.deleteById(idUser);
         }
 
         throw new UserNotFoundException("There aren`t any users with this ID");
     }
 
-    public UserEntity editUser(UUID idUser, @RequestBody @Validated UserRecordDto userRecordDto) throws UserNotFoundException{
+    public UserEntity editUser(UUID idUser, @RequestBody @Validated CreateUserDto createUserDto) throws UserNotFoundException {
         Optional<UserEntity> possibleUser = this.userRepository.findById(idUser);
 
-        if(possibleUser.isPresent()){
+        if (possibleUser.isPresent()) {
             UserEntity userAux = new UserEntity();
 
-            BeanUtils.copyProperties(userRecordDto, userAux);
+            BeanUtils.copyProperties(createUserDto, userAux);
 
             UserEntity user = possibleUser.get();
 
@@ -91,16 +97,4 @@ public class UserService {
 
         throw new UserNotFoundException("There isn`t any user with this ID");
     }
-
-    public UserEntity verifyAndReturnUser(UUID idUser) throws UserNotFoundException{
-        Optional<UserEntity> possibleUser = this.userRepository.findById(idUser);
-
-        if(possibleUser.isPresent()){
-            return possibleUser.get();
-        }
-        else{
-            throw new UserNotFoundException("There aren`t any user with this ID");
-        }
-    }
-
 }

@@ -19,6 +19,7 @@ public class TransactionEntity extends RepresentationModel<TransactionEntity> im
 
     @Serial
     private static final long serialVersionUID = 1L;
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Setter
@@ -46,7 +47,7 @@ public class TransactionEntity extends RepresentationModel<TransactionEntity> im
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(nullable = false, name = "category_ID")
-    @JsonIgnoreProperties()
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     @Setter
     @Getter
     private CategoryEntity categoryEntity;
