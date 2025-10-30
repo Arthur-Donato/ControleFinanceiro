@@ -2,6 +2,7 @@ package com.project.RastreadorDeFinancas.Services;
 
 import com.project.RastreadorDeFinancas.Controller.TransactionController;
 import com.project.RastreadorDeFinancas.Dtos.CreateTransactionDto;
+import com.project.RastreadorDeFinancas.Dtos.TransactionUpdateDto;
 import com.project.RastreadorDeFinancas.Entities.CategoryEntity;
 import com.project.RastreadorDeFinancas.Entities.TransactionEntity;
 import com.project.RastreadorDeFinancas.Entities.UserEntity;
@@ -54,37 +55,28 @@ public class TransactionService {
         this.categoryService = new CategoryService(userRepository, categoryRepository);
     }
 
-    public TransactionEntity createNewTransaction(@RequestBody @Validated CreateTransactionDto createTransactionDto, UUID idUser, UUID idCategory) {
-        TransactionEntity transaction = new TransactionEntity();
-        UserEntity user = userService.getOneUser(idUser);
-        CategoryEntity category = categoryService.getOneCategory(idUser, idCategory);
+    public TransactionEntity createNewTransaction(@RequestBody @Validated CreateTransactionDto createTransactionDto, UUID idUser, UUID idCategory) throws UserNotFoundException, CategoryNotFoundException{
+        TransactionEntity newTransaction = new TransactionEntity();
 
-        BeanUtils.copyProperties(createTransactionDto, transaction);
+        BeanUtils.copyProperties(createTransactionDto, newTransaction);
 
-        transaction.setUserEntity(user);
-        transaction.setCategoryEntity(category);
+        this.attributeCategoryAndUserToNewTransaction(idUser, idCategory, newTransaction);
 
-        this.transactionRepository.save(transaction);
+        this.saveTransaction(newTransaction);
 
-        return transaction;
+        return newTransaction;
     }
 
-    public TransactionEntity getOneTransaction(UUID idUser, UUID idTransaction) throws TransactionNotFoundException, UserNotFoundException {
-        UserEntity user = userService.getOneUser(idUser);
+    public void attributeCategoryAndUserToNewTransaction(UUID idUser, UUID idCategory, TransactionEntity newTransaction) throws UserNotFoundException, CategoryNotFoundException{
+        UserEntity user = this.userService.getOneUserByID(idUser);
+        CategoryEntity category = this.categoryService.getOneCategoryByID(idUser, idCategory);
 
-        Optional<TransactionEntity> transaction = this.transactionRepository.findByUserEntityAndID(user, idTransaction);
-
-        if(transaction.isPresent()){
-            return transaction.get();
-        }
-        else{
-            throw new TransactionNotFoundException();
-        }
-
+        newTransaction.setUserEntity(user);
+        newTransaction.setCategoryEntity(category);
     }
 
     public List<TransactionEntity> getAllTransactions(UUID idUser) throws UserNotFoundException {
-        UserEntity user = this.userService.getOneUser(idUser);
+        UserEntity user = this.userService.getOneUserByID(idUser);
 
         List<TransactionEntity> transactionList = this.transactionRepository.findAllByUserEntity(user);
 
@@ -95,27 +87,56 @@ public class TransactionService {
         return transactionList;
     }
 
-    public void deleteTransaction(UUID idUser, UUID idTransaction) throws UserNotFoundException, TransactionNotFoundException{
-        TransactionEntity transaction = this.getOneTransaction(idUser, idTransaction);
+    public TransactionEntity getOneTransactionByID(UUID idUser, UUID idTransaction) throws TransactionNotFoundException, UserNotFoundException {
+        UserEntity user = userService.getOneUserByID(idUser);
+
+        Optional<TransactionEntity> transaction = this.transactionRepository.findByUserEntityAndID(user.getID(), idTransaction);
+
+        if(transaction.isPresent()){
+            return transaction.get();
+        }
+        else{
+            throw new TransactionNotFoundException();
+        }
+
+    }
+
+    public void deleteTransactionByID(UUID idUser, UUID idTransaction) throws UserNotFoundException, TransactionNotFoundException{
+        TransactionEntity transaction = this.getOneTransactionByID(idUser, idTransaction);
 
 
         this.transactionRepository.deleteById(idTransaction);
     }
 
-    public TransactionEntity updateTransaction(UUID idUser, UUID idTransaction, @RequestBody @Validated CreateTransactionDto createTransactionDto) throws UserNotFoundException, TransactionNotFoundException{
-        TransactionEntity transaction = this.getOneTransaction(idUser, idTransaction);
+    public TransactionEntity updateTransactionByID(UUID idUser, UUID idTransaction, @RequestBody @Validated TransactionUpdateDto transactionUpdateDto) throws UserNotFoundException, TransactionNotFoundException{
+        TransactionEntity transaction = this.getOneTransactionByID(idUser, idTransaction);
 
         TransactionEntity transactionAux = new TransactionEntity();
 
-        BeanUtils.copyProperties(createTransactionDto, transactionAux);
+        BeanUtils.copyProperties(transactionUpdateDto, transactionAux);
 
-        transaction.setValue(transactionAux.getValue());
-        transaction.setDate(transactionAux.getDate());
-        transaction.setDescription(transactionAux.getDescription());
-        transaction.setType(transactionAux.getType());
+        if(!(transactionAux.getValue() == null)){
+            transaction.setValue(transactionAux.getValue());
+        }
 
-        this.transactionRepository.save(transaction);
+        if(!(transactionAux.getType() == null)){
+            transaction.setType(transactionAux.getType());
+        }
+
+        if(!(transactionAux.getDescription() == null)){
+            transaction.setDescription(transactionAux.getDescription());
+        }
+
+        this.saveTransaction(transaction);
 
         return transaction;
+    }
+
+    public void saveTransaction(TransactionEntity transaction){
+        if(this.transactionRepository.save(transaction).getClass() == TransactionEntity.class){
+            return;
+        }
+
+        throw new TransactionNotSavedException();
     }
 }

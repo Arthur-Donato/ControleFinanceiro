@@ -1,6 +1,7 @@
 package com.project.RastreadorDeFinancas.Controller;
 
 import com.project.RastreadorDeFinancas.Dtos.CategoryResponseDto;
+import com.project.RastreadorDeFinancas.Dtos.CategoryUpdateDto;
 import com.project.RastreadorDeFinancas.Dtos.CreateCategoryDto;
 import com.project.RastreadorDeFinancas.Entities.CategoryEntity;
 import com.project.RastreadorDeFinancas.Exceptions.CategoryNotFoundException;
@@ -49,7 +50,7 @@ public class CategoryController {
     @GetMapping(path = "/{id}")
     public ResponseEntity<CategoryResponseDto> getOneCategoryById(@PathVariable(value = "idUser") UUID idUser, @PathVariable (value = "id") UUID id){
         try{
-            CategoryEntity category = categoryService.getOneCategory(idUser, id);
+            CategoryEntity category = categoryService.getOneCategoryByID(idUser, id);
 
             CategoryResponseDto categoryResponseDto = new CategoryResponseDto(category);
 
@@ -73,10 +74,10 @@ public class CategoryController {
         }
     }
 
-    @DeleteMapping(path = "/{id}/delete")
+    @DeleteMapping(path = "/{id}")
     public ResponseEntity<CategoryResponseDto> deleteCategory(@PathVariable (value = "idUser") UUID idUser, @PathVariable (value = "id") UUID id ){
         try{
-            categoryService.deleteCategory(idUser, id);
+            categoryService.deleteCategoryByID(idUser, id);
 
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         }
@@ -86,9 +87,9 @@ public class CategoryController {
     }
 
     @PutMapping(path =  "/{id}")
-    public ResponseEntity<CategoryResponseDto> updateCategory(@PathVariable (value = "idUser") UUID idUser, @PathVariable (value = "id") UUID id, CreateCategoryDto createCategoryDto){
+    public ResponseEntity<CategoryResponseDto> updateCategory(@PathVariable (value = "idUser") UUID idUser, @PathVariable (value = "id") UUID id, @RequestBody @Validated CategoryUpdateDto categoryUpdateDto){
         try{
-            CategoryEntity category = categoryService.editCategory(idUser, id, createCategoryDto);
+            CategoryEntity category = categoryService.updateCategoryByID(idUser, id, categoryUpdateDto);
 
             CategoryResponseDto categoryResponseDto = new CategoryResponseDto(category);
 

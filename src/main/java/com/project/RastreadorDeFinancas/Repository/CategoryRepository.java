@@ -17,11 +17,10 @@ public interface CategoryRepository extends JpaRepository<CategoryEntity, UUID> 
     CategoryEntity getFirstByUserEntity(UserEntity user);
 
 
-    @Query(value = "SELECT * FROM TB_CATEGORY t WHERE t.userEntity LIKE %:userEntity%",
-    nativeQuery = true)
-    List<CategoryEntity> findAllByUserEntity(@Param("userEntity") UserEntity userEntity);
+    @Query(value = "SELECT * FROM TB_CATEGORY t WHERE t.user_ID = :userID", nativeQuery = true)
+    List<CategoryEntity> findAllByUserID(@Param("userID") UUID userID);
 
-    @Query(value = "SELECT * FROM TB_CATEGORY t WHERE t.userEntity LIKE %:userEntity% AND t.id LIKE %:id%",
+    @Query(value = "SELECT * FROM TB_CATEGORY t WHERE t.user_ID = :userID AND t.id = :id" ,
     nativeQuery = true)
-    Optional<CategoryEntity> findByUserEntityAndID(@Param ("userEntity") UserEntity userEntity, @Param("id") UUID id);
+    Optional<CategoryEntity> findByUserEntityAndID(@Param ("userID") UUID userID, @Param("id") UUID id);
 }

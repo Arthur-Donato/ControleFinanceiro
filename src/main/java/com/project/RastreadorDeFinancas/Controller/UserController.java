@@ -2,6 +2,7 @@ package com.project.RastreadorDeFinancas.Controller;
 
 import com.project.RastreadorDeFinancas.Dtos.CreateUserDto;
 import com.project.RastreadorDeFinancas.Dtos.UserResponseDto;
+import com.project.RastreadorDeFinancas.Dtos.UserUpdateDto;
 import com.project.RastreadorDeFinancas.Entities.UserEntity;
 import com.project.RastreadorDeFinancas.Exceptions.UserNotFoundException;
 import com.project.RastreadorDeFinancas.Repository.UserRepository;
@@ -43,7 +44,7 @@ public class    UserController {
     @GetMapping(path = "/{id}")
     public ResponseEntity<UserResponseDto> getOneUserById(@PathVariable(value = "id") UUID id){
         try{
-            UserEntity user = this.userService.getOneUser(id);
+            UserEntity user = this.userService.getOneUserByID(id);
 
             UserResponseDto userResponseDto = new UserResponseDto(user);
 
@@ -68,7 +69,7 @@ public class    UserController {
     @DeleteMapping(path = "/delete/{id}")
     public ResponseEntity<UserResponseDto> deleteUser(@PathVariable(value = "id")UUID id){
         try{
-            userService.deleteUser(id);
+            userService.deleteUserByID(id);
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 
         }catch(UserNotFoundException e){
@@ -77,9 +78,9 @@ public class    UserController {
     }
 
     @PutMapping(path = "/put/{id}")
-    public ResponseEntity<UserResponseDto> updateUser(@PathVariable (value = "id") UUID id, @RequestBody @Validated CreateUserDto createUserDto){
+    public ResponseEntity<UserResponseDto> updateUser(@PathVariable (value = "id") UUID id, @RequestBody @Validated UserUpdateDto userUpdateDto){
         try{
-            UserEntity user = userService.editUser(id, createUserDto);
+            UserEntity user = userService.updateUserByID(id, userUpdateDto);
 
             UserResponseDto userResponseDto = new UserResponseDto(user);
 

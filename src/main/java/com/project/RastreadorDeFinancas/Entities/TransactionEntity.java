@@ -1,6 +1,5 @@
 package com.project.RastreadorDeFinancas.Entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -11,6 +10,7 @@ import java.io.Serial;
 import java.io.Serializable;
 
 import java.sql.Date;
+import java.time.Instant;
 import java.util.UUID;
 
 @Entity
@@ -43,7 +43,7 @@ public class TransactionEntity extends RepresentationModel<TransactionEntity> im
     @Column(nullable = false)
     @Setter
     @Getter
-    private Date date;
+    private Instant date;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(nullable = false, name = "category_ID")
@@ -56,10 +56,9 @@ public class TransactionEntity extends RepresentationModel<TransactionEntity> im
     @JoinColumn(nullable = false, name = "user_ID")
     @Setter
     @Getter
-
     private UserEntity userEntity;
 
-    public TransactionEntity(String type, Double value, String description, Date date){
+    public TransactionEntity(String type, Double value, String description, Instant date){
         this.type = type;
         this.value = value;
         this.description = description;

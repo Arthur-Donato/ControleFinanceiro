@@ -2,8 +2,10 @@ package com.project.RastreadorDeFinancas.Services;
 
 import com.project.RastreadorDeFinancas.Controller.UserController;
 import com.project.RastreadorDeFinancas.Dtos.CreateUserDto;
+import com.project.RastreadorDeFinancas.Dtos.UserUpdateDto;
 import com.project.RastreadorDeFinancas.Entities.UserEntity;
 import com.project.RastreadorDeFinancas.Exceptions.UserNotFoundException;
+import com.project.RastreadorDeFinancas.Exceptions.UserNotSavedException;
 import com.project.RastreadorDeFinancas.Repository.UserRepository;
 import lombok.Getter;
 import lombok.Setter;
@@ -30,12 +32,12 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public UserEntity createNewUser(@RequestBody @Validated CreateUserDto createUserDto) {
+    public UserEntity createNewUser(@RequestBody @Validated CreateUserDto createUserDto) throws UserNotSavedException{
         UserEntity newUser = new UserEntity();
 
         BeanUtils.copyProperties(createUserDto, newUser);
 
-        this.userRepository.save(newUser);
+        this.saveUser(newUser);
 
         return newUser;
     }
@@ -54,47 +56,47 @@ public class UserService {
         }
     }
 
-    public UserEntity getOneUser(UUID idUser) throws UserNotFoundException{
+    public UserEntity getOneUserByID(UUID idUser){
         Optional<UserEntity> possibleUser = this.userRepository.findById(idUser);
 
         if(possibleUser.isPresent()){
             return possibleUser.get();
         }
         else{
-            throw new UserNotFoundException("There aren`t any user with this ID");
+            throw new UserNotFoundException();
         }
     }
 
-    public void deleteUser(UUID idUser) throws UserNotFoundException {
-        Optional<UserEntity> user = this.userRepository.findById(idUser);
+    public void deleteUserByID(UUID idUser) throws UserNotFoundException {
+        UserEntity user = this.getOneUserByID(idUser);
 
-        if (user.isPresent()) {
-            this.userRepository.deleteById(idUser);
-        }
+        this.userRepository.delete(user);
 
-        throw new UserNotFoundException("There aren`t any users with this ID");
     }
 
-    public UserEntity editUser(UUID idUser, @RequestBody @Validated CreateUserDto createUserDto) throws UserNotFoundException {
-        Optional<UserEntity> possibleUser = this.userRepository.findById(idUser);
+    public UserEntity updateUserByID(UUID idUser, @RequestBody @Validated UserUpdateDto userUpdateDto) throws UserNotFoundException, UserNotSavedException {
+        UserEntity user = this.getOneUserByID(idUser);
+        UserEntity userAux = new UserEntity();
 
-        if (possibleUser.isPresent()) {
-            UserEntity userAux = new UserEntity();
+        BeanUtils.copyProperties(userUpdateDto, userAux);
 
-            BeanUtils.copyProperties(createUserDto, userAux);
-
-            UserEntity user = possibleUser.get();
-
+        if(!(userAux.getName() == null)){
             user.setName(userAux.getName());
-            user.setEmail(userAux.getEmail());
-            user.setPassword(userAux.getPassword());
-            user.setCPF(userAux.getCPF());
-
-            this.userRepository.save(user);
-
-            return user;
         }
 
-        throw new UserNotFoundException("There isn`t any user with this ID");
+        if(!(userAux.getEmail() == null)){
+            user.setEmail(userAux.getEmail());
+        }
+
+        this.saveUser(user);
+
+        return user;
+    }
+
+    public void saveUser(UserEntity user){
+        if(this.userRepository.save(user).getClass() == UserEntity.class){
+            return;
+        }
+        throw new UserNotSavedException();
     }
 }

@@ -15,7 +15,6 @@ import java.util.UUID;
 public interface TransactionRepository extends JpaRepository<TransactionEntity, UUID> {
     List<TransactionEntity> findAllByUserEntity(UserEntity userEntity);
 
-    @Query(value = "SELECT * FROM TB_TRANSACTION t WHERE t.userEntity LIKE %:userEntity% AND t.ID LIKE %:id%"
-    , nativeQuery = true)
-    Optional<TransactionEntity> findByUserEntityAndID(@Param("userEntity") UserEntity userEntity, @Param("id") UUID id);
+    @Query(value = "SELECT * FROM TB_TRANSACTION t WHERE t.user_ID = :userID AND t.ID = :id", nativeQuery = true)
+    Optional<TransactionEntity> findByUserEntityAndID(@Param("userID") UUID userID, @Param("id") UUID id);
 }

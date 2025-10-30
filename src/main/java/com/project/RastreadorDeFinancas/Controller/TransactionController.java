@@ -2,6 +2,7 @@ package com.project.RastreadorDeFinancas.Controller;
 
 import com.project.RastreadorDeFinancas.Dtos.CreateTransactionDto;
 import com.project.RastreadorDeFinancas.Dtos.TransactionResponseDto;
+import com.project.RastreadorDeFinancas.Dtos.TransactionUpdateDto;
 import com.project.RastreadorDeFinancas.Entities.TransactionEntity;
 import com.project.RastreadorDeFinancas.Exceptions.TransactionNotFoundException;
 import com.project.RastreadorDeFinancas.Exceptions.UserNotFoundException;
@@ -45,7 +46,7 @@ public class TransactionController {
     @GetMapping(path = "/{idTransaction}")
     public ResponseEntity<TransactionResponseDto> getOneTransactionById(@PathVariable (value = "idUser") UUID idUser, @PathVariable (value = "idTransaction") UUID idTransaction){
         try{
-            TransactionEntity transaction = this.transactionService.getOneTransaction(idUser, idTransaction);
+            TransactionEntity transaction = this.transactionService.getOneTransactionByID(idUser, idTransaction);
 
             TransactionResponseDto transactionResponseDto = new TransactionResponseDto(transaction);
 
@@ -71,7 +72,7 @@ public class TransactionController {
     @DeleteMapping(path = "/{idTransaction}")
     public ResponseEntity<TransactionResponseDto> deleteTransaction(@PathVariable(value = "idUser") UUID idUser, @PathVariable(value = "idTransaction") UUID idTransaction){
         try{
-            this.transactionService.deleteTransaction(idUser, idTransaction);
+            this.transactionService.deleteTransactionByID(idUser, idTransaction);
 
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         } catch(UserNotFoundException | TransactionNotFoundException e ){
@@ -80,9 +81,9 @@ public class TransactionController {
     }
 
     @PutMapping(path = "/{idTransaction}")
-    public ResponseEntity<TransactionResponseDto> updateTransaction(@PathVariable(value = "idUser") UUID idUser, @PathVariable(value = "idTransaction") UUID idTransaction, @RequestBody @Validated CreateTransactionDto createTransactionDto){
+    public ResponseEntity<TransactionResponseDto> updateTransaction(@PathVariable(value = "idUser") UUID idUser, @PathVariable(value = "idTransaction") UUID idTransaction, @RequestBody @Validated TransactionUpdateDto transactionUpdateDto){
         try{
-            TransactionEntity newTransaction = this.transactionService.updateTransaction(idUser, idTransaction, createTransactionDto);
+            TransactionEntity newTransaction = this.transactionService.updateTransactionByID(idUser, idTransaction, transactionUpdateDto);
 
             TransactionResponseDto transactionResponseDto = new TransactionResponseDto(newTransaction);
 
