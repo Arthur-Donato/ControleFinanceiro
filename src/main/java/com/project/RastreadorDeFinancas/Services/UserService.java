@@ -67,10 +67,12 @@ public class UserService {
         }
     }
 
-    public void deleteUserByID(UUID idUser) throws UserNotFoundException {
+    public boolean deleteUserByID(UUID idUser) throws UserNotFoundException {
         UserEntity user = this.getOneUserByID(idUser);
 
         this.userRepository.delete(user);
+
+        return true;
 
     }
 
@@ -93,9 +95,9 @@ public class UserService {
         return user;
     }
 
-    public void saveUser(UserEntity user){
+    public boolean saveUser(UserEntity user){
         if(this.userRepository.save(user).getClass() == UserEntity.class){
-            return;
+            return true;
         }
         throw new UserNotSavedException();
     }
