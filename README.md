@@ -13,7 +13,8 @@ Essa é uma API RESTful para um sistema de controle financeiro pessoal, possibil
 * [✅] Registro de categorias
 * [✅] Registro de transações
 * [✅] Edição e exclusão de usuários, categorias e transações
-* [⏳] Interface gráfica para complementar a API
+* [⏳] Testes de unidade
+* [ ] Interface gráfica para complementar a API
 * [ ] Dashboard com gráficos
 * [ ] Relatórios mensais
 
@@ -51,6 +52,6 @@ Essa é uma API RESTful para um sistema de controle financeiro pessoal, possibil
 
 ## 🛣️ Próximos passos (Roadmap)
 
-* [ ] Implementar testes unitários para os serviços.
+* [ ] Implementar uma interface gráfica.
 * [ ] Criar uma funcionalidade para meta de gastos.
 * [ ] Implementar módulo de autenticação.
