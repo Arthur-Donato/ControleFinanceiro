@@ -17,8 +17,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -139,6 +138,46 @@ public class UserServiceTest {
         Assertions.assertThrows(NullPointerException.class, () -> userService.createNewUser(createUserDto));
 
         verify(userRepository, times(1)).save(any(UserEntity.class));
+    }
+
+    @Test
+    public void getAllUsers_ReturnUserList() {
+        //ARRANGE
+        List<UserEntity> userList = Arrays.asList(new UserEntity("094586749", "Arthur", "arthur@gmail.com", "123"), new UserEntity("1238974423", "Isabella", "isabella@gmail.com", "1234"));
+
+        when(userRepository.findAll()).thenReturn(userList);
+
+        //ACT
+
+        List<UserEntity> finalList = userService.getAllUsers();
+
+        //ASSERTIONS
+
+        Assertions.assertEquals(userList.size(), finalList.size());
+        Assertions.assertEquals(userList.getFirst().getName(), finalList.getFirst().getName());
+        Assertions.assertEquals(userList.getLast().getName(), finalList.getLast().getName());
+        Assertions.assertEquals(userList.getFirst().getEmail(), finalList.getFirst().getEmail());
+        Assertions.assertEquals(userList.getLast().getEmail(), finalList.getLast().getEmail());
+
+        verify(userRepository, times(1)).findAll();
+
+    }
+
+    @Test
+    public void getAllUsers_ThrowUserNotFoundException(){
+        List<UserEntity> userList = new ArrayList<>();
+
+        when(userRepository.findAll()).thenReturn(userList);
+
+        Assertions.assertThrows(UserNotFoundException.class, () -> userService.getAllUsers());
+    }
+
+    @Test
+    public void getAllUsers_ThorwsNullPointerException(){
+
+        when(userRepository.findAll()).thenReturn(null);
+
+        Assertions.assertThrows(NullPointerException.class, () -> userService.getAllUsers());
     }
 
     @Test
