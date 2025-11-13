@@ -71,11 +71,15 @@ public class CategoryService {
 
         List<CategoryEntity> categoriesList = this.categoryRepository.findAllByUserID(user.getID());
 
-        for(CategoryEntity category : categoriesList){
-            category.add(linkTo(methodOn(CategoryController.class).getOneCategoryById(idUser, category.getID())).withSelfRel());
-        }
+        if(!categoriesList.isEmpty()){
+            for(CategoryEntity category : categoriesList){
+                category.add(linkTo(methodOn(CategoryController.class).getOneCategoryById(idUser, category.getID())).withSelfRel());
+            }
 
-        return categoriesList;
+            return categoriesList;
+        }else{
+            throw new CategoryNotFoundException();
+        }
      }
 
     public CategoryEntity getOneCategoryByID(UUID idUser, UUID idCategory) throws CategoryNotFoundException, UserNotFoundException{
@@ -99,7 +103,7 @@ public class CategoryService {
          this.categoryRepository.delete(category);
      }
 
-     public CategoryEntity updateCategoryByID(UUID idUser, UUID idCategory, @RequestBody @Validated CategoryUpdateDto categoryUpdateDto) throws CategoryNotFoundException, CategoryNotSavedException{
+     public CategoryEntity updateCategoryByID(UUID idUser, UUID idCategory, @RequestBody @Validated CategoryUpdateDto categoryUpdateDto) throws CategoryNotFoundException, CategoryNotSavedException, UserNotFoundException{
         CategoryEntity category = getOneCategoryByID(idUser,idCategory);
 
         CategoryEntity categoryAux = new CategoryEntity();
@@ -113,9 +117,9 @@ public class CategoryService {
         return category;
      }
 
-     public void saveCategory(CategoryEntity category) {
+     public boolean saveCategory(CategoryEntity category) {
         if(this.categoryRepository.save(category).getClass() == CategoryEntity.class){
-            return;
+            return true;
         }
         throw new CategoryNotSavedException();
      }
