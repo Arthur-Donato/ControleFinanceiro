@@ -9,8 +9,8 @@ import org.springframework.hateoas.RepresentationModel;
 import java.io.Serial;
 import java.io.Serializable;
 
-import java.sql.Date;
 import java.time.Instant;
+import java.util.Objects;
 import java.util.UUID;
 
 @Entity
@@ -70,5 +70,16 @@ public class TransactionEntity extends RepresentationModel<TransactionEntity> im
 
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        TransactionEntity that = (TransactionEntity) o;
+        return Objects.equals(getID(), that.getID()) && Objects.equals(getType(), that.getType()) && Objects.equals(getValue(), that.getValue()) && Objects.equals(getDescription(), that.getDescription()) && Objects.equals(getDate(), that.getDate()) && Objects.equals(getCategoryEntity(), that.getCategoryEntity()) && Objects.equals(getUserEntity(), that.getUserEntity());
+    }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), getID(), getType(), getValue(), getDescription(), getDate(), getCategoryEntity(), getUserEntity());
+    }
 }

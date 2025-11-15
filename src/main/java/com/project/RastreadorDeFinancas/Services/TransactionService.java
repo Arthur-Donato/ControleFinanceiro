@@ -80,14 +80,19 @@ public class TransactionService {
 
         List<TransactionEntity> transactionList = this.transactionRepository.findAllByUserEntity(user);
 
-        for(TransactionEntity transaction: transactionList){
-            transaction.add(linkTo(methodOn(TransactionController.class).getOneTransactionById(idUser, transaction.getID())).withSelfRel());
+        if(!transactionList.isEmpty()){
+            for(TransactionEntity transaction: transactionList){
+                transaction.add(linkTo(methodOn(TransactionController.class).getOneTransactionById(idUser, transaction.getID())).withSelfRel());
+            }
+
+            return transactionList;
         }
 
-        return transactionList;
+        throw new TransactionNotFoundException();
+
     }
 
-    public TransactionEntity getOneTransactionByID(UUID idUser, UUID idTransaction) throws TransactionNotFoundException, UserNotFoundException {
+    public TransactionEntity getOneTransactionByID(UUID idUser, UUID idTransaction) throws UserNotFoundException {
         UserEntity user = userService.getOneUserByID(idUser);
 
         Optional<TransactionEntity> transaction = this.transactionRepository.findByUserEntityAndID(user.getID(), idTransaction);
@@ -108,7 +113,7 @@ public class TransactionService {
         this.transactionRepository.deleteById(idTransaction);
     }
 
-    public TransactionEntity updateTransactionByID(UUID idUser, UUID idTransaction, @RequestBody @Validated TransactionUpdateDto transactionUpdateDto) throws UserNotFoundException, TransactionNotFoundException{
+    public TransactionEntity updateTransactionByID(UUID idUser, UUID idTransaction, @RequestBody @Validated TransactionUpdateDto transactionUpdateDto) throws UserNotFoundException, TransactionNotFoundException, TransactionNotSavedException{
         TransactionEntity transaction = this.getOneTransactionByID(idUser, idTransaction);
 
         TransactionEntity transactionAux = new TransactionEntity();
@@ -132,9 +137,9 @@ public class TransactionService {
         return transaction;
     }
 
-    public void saveTransaction(TransactionEntity transaction){
+    public boolean saveTransaction(TransactionEntity transaction){
         if(this.transactionRepository.save(transaction).getClass() == TransactionEntity.class){
-            return;
+            return true;
         }
 
         throw new TransactionNotSavedException();
