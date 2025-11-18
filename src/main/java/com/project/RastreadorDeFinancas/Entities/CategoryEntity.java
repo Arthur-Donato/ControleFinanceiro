@@ -1,6 +1,5 @@
 package com.project.RastreadorDeFinancas.Entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -9,7 +8,7 @@ import org.springframework.hateoas.RepresentationModel;
 
 import java.io.Serial;
 import java.io.Serializable;
-import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 @Entity
@@ -44,5 +43,18 @@ public class CategoryEntity extends RepresentationModel<CategoryEntity> implemen
 
     public CategoryEntity(){
 
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        CategoryEntity that = (CategoryEntity) o;
+        return Objects.equals(getID(), that.getID()) && Objects.equals(getName(), that.getName()) && Objects.equals(getUserEntity(), that.getUserEntity());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), getID(), getName(), getUserEntity());
     }
 }

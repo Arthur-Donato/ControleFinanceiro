@@ -8,10 +8,8 @@ import com.project.RastreadorDeFinancas.Exceptions.CategoryNotFoundException;
 import com.project.RastreadorDeFinancas.Exceptions.CategoryNotSavedException;
 import com.project.RastreadorDeFinancas.Exceptions.UserNotFoundException;
 import com.project.RastreadorDeFinancas.Repository.CategoryRepository;
-import com.project.RastreadorDeFinancas.Repository.UserRepository;
 import com.project.RastreadorDeFinancas.Services.CategoryService;
 import com.project.RastreadorDeFinancas.Services.UserService;
-import org.checkerframework.checker.units.qual.C;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,7 +17,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.mockito.internal.matchers.Any;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.*;
@@ -54,6 +51,9 @@ public class CategoryServiceTest {
 
         user = new UserEntity("12398712", "Arthur", "arthur@", "123");
         user.setID(id);
+
+        category.setID(id);
+        category.setUserEntity(user);
     }
 
     @Test
@@ -85,7 +85,7 @@ public class CategoryServiceTest {
     @Test
     public void attributeUserEntityToNewCategory_ReturnSomething(){
 
-        when(userService.getOneUserByID(id)).thenReturn(new UserEntity("2034982", "Arthur", "arhutr@", "123"));
+        when(userService.getOneUserByID(any(UUID.class))).thenReturn(new UserEntity("2034982", "Arthur", "arhutr@", "123"));
 
         categoryService.attributeUserEntityToNewCategory(id, category);
 
@@ -95,7 +95,7 @@ public class CategoryServiceTest {
     @Test
     public void attribuiteUserEntityToNewCategory_ThrowsUserNotFoundException(){
 
-        when(userService.getOneUserByID(id)).thenThrow(new UserNotFoundException());
+        when(userService.getOneUserByID(any(UUID.class))).thenThrow(new UserNotFoundException());
 
         Assertions.assertThrows(UserNotFoundException.class, () -> categoryService.attributeUserEntityToNewCategory(id, category));
 
@@ -106,7 +106,7 @@ public class CategoryServiceTest {
     public void attribuiteUserEntityToNewCategory_ThrowNullPointerException(){
         UserEntity user = new UserEntity("12398712", "Arthur", "arthur@", "123");
 
-        when(userService.getOneUserByID(id)).thenReturn(user);
+        when(userService.getOneUserByID(any(UUID.class))).thenReturn(user);
 
         Assertions.assertThrows(NullPointerException.class, () -> categoryService.attributeUserEntityToNewCategory(id, null));
 
@@ -120,15 +120,17 @@ public class CategoryServiceTest {
 
 
         when(categoryRepository.save(any(CategoryEntity.class))).thenReturn(category);
-        when(userService.getOneUserByID(id)).thenReturn(user);
+        when(userService.getOneUserByID(any(UUID.class))).thenReturn(user);
         //ACT
 
         CategoryEntity newCategory = categoryService.createNewCategory(dto, id);
+        newCategory.setID(id);
+        newCategory.setUserEntity(user);
 
         //ASSERTIONS
 
-        Assertions.assertNotNull(newCategory);
-        Assertions.assertEquals(category.getName(), newCategory.getName());
+        //Assertions.assertNotNull(newCategory);
+        Assertions.assertEquals(newCategory, category);
 
         verify(categoryRepository, times(1)).save(category);
         verify(userService, times(1)).getOneUserByID(id);
@@ -140,7 +142,7 @@ public class CategoryServiceTest {
         CreateCategoryDto dto = new CreateCategoryDto("Games");
         CategoryEntity categorySubClass = new CategoryEntity(){};
 
-        when(userService.getOneUserByID(id)).thenReturn(user);
+        when(userService.getOneUserByID(any(UUID.class))).thenReturn(user);
         when(categoryRepository.save(any(CategoryEntity.class))).thenReturn(categorySubClass);
 
         Assertions.assertThrows(CategoryNotSavedException.class, () -> categoryService.createNewCategory(dto, id));
@@ -152,7 +154,7 @@ public class CategoryServiceTest {
     @Test
     public void createNewCategory_ThrowsUserNotFoundException(){
         CreateCategoryDto dto = new CreateCategoryDto("Games");
-        when(userService.getOneUserByID(id)).thenThrow(new UserNotFoundException());
+        when(userService.getOneUserByID(any(UUID.class))).thenThrow(new UserNotFoundException());
 
 
         Assertions.assertThrows(UserNotFoundException.class, () -> categoryService.createNewCategory(dto, id));
@@ -163,7 +165,7 @@ public class CategoryServiceTest {
     public void createNewUser_ThrowsNullPointerException(){
         CreateCategoryDto dto = new CreateCategoryDto("Games");
 
-        when(userService.getOneUserByID(id)).thenReturn(null);
+        when(userService.getOneUserByID(any(UUID.class))).thenReturn(null);
         when(categoryRepository.save(any(CategoryEntity.class))).thenReturn(null);
 
         Assertions.assertThrows(NullPointerException.class, () -> categoryService.createNewCategory(dto, id));
@@ -179,15 +181,12 @@ public class CategoryServiceTest {
     public void getAllCategories_ReturnCategoryList(){
         List<CategoryEntity> categoryList = Arrays.asList(new CategoryEntity("Games"), new CategoryEntity("Food"));
 
-        when(userService.getOneUserByID(id)).thenReturn(user);
-        when(categoryRepository.findAllByUserID(id)).thenReturn(categoryList);
+        when(userService.getOneUserByID(any(UUID.class))).thenReturn(user);
+        when(categoryRepository.findAllByUserID(any(UUID.class))).thenReturn(categoryList);
 
         List<CategoryEntity> finalList = categoryService.getAllCategories(id);
 
-        Assertions.assertEquals(categoryList.size(), finalList.size());
-        Assertions.assertEquals(categoryList.getFirst().getName(), finalList.getFirst().getName());
-        Assertions.assertEquals(categoryList.getLast().getName(), finalList.getLast().getName());
-
+        Assertions.assertEquals(finalList, categoryList);
 
         verify(userService, times(1)).getOneUserByID(id);
         verify(categoryRepository, times(1)).findAllByUserID(id);
@@ -198,8 +197,8 @@ public class CategoryServiceTest {
 
         List<CategoryEntity> listEmpty = new ArrayList<>();
 
-        when(userService.getOneUserByID(id)).thenReturn(user);
-        when(categoryRepository.findAllByUserID(id)).thenReturn(listEmpty);
+        when(userService.getOneUserByID(any(UUID.class))).thenReturn(user);
+        when(categoryRepository.findAllByUserID(any(UUID.class))).thenReturn(listEmpty);
 
         Assertions.assertThrows(CategoryNotFoundException.class, () -> categoryService.getAllCategories(id));
 
@@ -209,7 +208,7 @@ public class CategoryServiceTest {
 
     @Test
     public void getAllCategories_ThrowsUserNotFoundException(){
-        when(userService.getOneUserByID(id)).thenThrow(new UserNotFoundException());
+        when(userService.getOneUserByID(any(UUID.class))).thenThrow(new UserNotFoundException());
 
         Assertions.assertThrows(UserNotFoundException.class, () -> categoryService.getAllCategories(id));
 
@@ -219,8 +218,8 @@ public class CategoryServiceTest {
     @Test
     public void getAllCategories_ThrowsNullPointerException(){
 
-        when(userService.getOneUserByID(id)).thenReturn(user);
-        when(categoryRepository.findAllByUserID(id)).thenReturn(null);
+        when(userService.getOneUserByID(any(UUID.class))).thenReturn(user);
+        when(categoryRepository.findAllByUserID(any(UUID.class))).thenReturn(null);
 
         Assertions.assertThrows(NullPointerException.class, () -> categoryService.getAllCategories(id));
 
@@ -230,13 +229,13 @@ public class CategoryServiceTest {
     @Test
     public void getOneCategoryByID_ReturnCategory(){
 
-        when(userService.getOneUserByID(id)).thenReturn(user);
-        when(categoryRepository.findByUserEntityAndID(id, id)).thenReturn(Optional.of(category));
+        when(userService.getOneUserByID(any(UUID.class))).thenReturn(user);
+        when(categoryRepository.findByUserEntityAndID(any(UUID.class), any(UUID.class))).thenReturn(Optional.of(category));
 
         CategoryEntity finalCategory = categoryService.getOneCategoryByID(id, id);
 
         Assertions.assertNotNull(finalCategory);
-        Assertions.assertEquals(finalCategory.getName(), category.getName());
+        Assertions.assertEquals(finalCategory, category);
 
         verify(userService, times(1)).getOneUserByID(id);
         verify(categoryRepository, times(1)).findByUserEntityAndID(id, id);
@@ -245,8 +244,8 @@ public class CategoryServiceTest {
     @Test
     public void getOneCategoryByID_ThrowsCategoryNotFoundException(){
 
-        when(userService.getOneUserByID(id)).thenReturn(user);
-        when(categoryRepository.findByUserEntityAndID(id, id)).thenReturn(Optional.empty());
+        when(userService.getOneUserByID(any(UUID.class))).thenReturn(user);
+        when(categoryRepository.findByUserEntityAndID(any(UUID.class), any(UUID.class))).thenReturn(Optional.empty());
 
         Assertions.assertThrows(CategoryNotFoundException.class, () -> categoryService.getOneCategoryByID(id, id));
 
@@ -257,7 +256,7 @@ public class CategoryServiceTest {
     @Test
     public void getOneCategoryByID_ThrowsUserNotFoundException(){
 
-        when(userService.getOneUserByID(id)).thenThrow(new UserNotFoundException());
+        when(userService.getOneUserByID(any(UUID.class))).thenThrow(new UserNotFoundException());
 
         Assertions.assertThrows(UserNotFoundException.class, () -> categoryService.getOneCategoryByID(id, id));
 
@@ -267,8 +266,8 @@ public class CategoryServiceTest {
     @Test
     public void getOneCategoryByID_ThrowsNullPointerException(){
 
-        when(userService.getOneUserByID(id)).thenReturn(user);
-        when(categoryRepository.findByUserEntityAndID(id, id)).thenReturn(null);
+        when(userService.getOneUserByID(any(UUID.class))).thenReturn(user);
+        when(categoryRepository.findByUserEntityAndID(any(UUID.class), any(UUID.class))).thenReturn(null);
 
         Assertions.assertThrows(NullPointerException.class, () -> categoryService.getOneCategoryByID(id, id));
     }
@@ -276,8 +275,8 @@ public class CategoryServiceTest {
     @Test
     public void deleteCategory_ReturnVoid(){
 
-        when(userService.getOneUserByID(id)).thenReturn(user);
-        when(categoryRepository.findByUserEntityAndID(id, id)).thenReturn(Optional.of(category));
+        when(userService.getOneUserByID(any(UUID.class))).thenReturn(user);
+        when(categoryRepository.findByUserEntityAndID(any(UUID.class), any(UUID.class))).thenReturn(Optional.of(category));
 
         categoryService.deleteCategoryByID(id, id);
 
@@ -290,8 +289,8 @@ public class CategoryServiceTest {
     @Test
     public void deleteCategory_ThrowCategoryNotFoundException(){
 
-        when(userService.getOneUserByID(id)).thenReturn(user);
-        when(categoryRepository.findByUserEntityAndID(id, id)).thenReturn(Optional.empty());
+        when(userService.getOneUserByID(any(UUID.class))).thenReturn(user);
+        when(categoryRepository.findByUserEntityAndID(any(UUID.class), any(UUID.class))).thenReturn(Optional.empty());
 
         Assertions.assertThrows(CategoryNotFoundException.class, () -> categoryService.deleteCategoryByID(id, id));
 
@@ -303,7 +302,7 @@ public class CategoryServiceTest {
     @Test
     public void deleteCategory_ThrowsUserNotFoundException(){
 
-        when(userService.getOneUserByID(id)).thenThrow(new UserNotFoundException());
+        when(userService.getOneUserByID(any(UUID.class))).thenThrow(new UserNotFoundException());
 
         Assertions.assertThrows(UserNotFoundException.class, () -> categoryService.deleteCategoryByID(id, id));
 
@@ -313,8 +312,8 @@ public class CategoryServiceTest {
     @Test
     public void deleteCategory_ThrowsNullPointerException(){
 
-        when(userService.getOneUserByID(id)).thenReturn(user);
-        when(categoryRepository.findByUserEntityAndID(id, id)).thenReturn(null);
+        when(userService.getOneUserByID(any(UUID.class))).thenReturn(user);
+        when(categoryRepository.findByUserEntityAndID(any(UUID.class), any(UUID.class))).thenReturn(null);
 
         Assertions.assertThrows(NullPointerException.class, () -> categoryService.deleteCategoryByID(id, id));
 
@@ -327,9 +326,9 @@ public class CategoryServiceTest {
     public void updateCategory_ReturnCategory(){
         CategoryUpdateDto dto = new CategoryUpdateDto("Food");
 
-        when(userService.getOneUserByID(id)).thenReturn(user);
-        when(categoryRepository.findByUserEntityAndID(id, id)).thenReturn(Optional.of(category));
-        when(categoryRepository.save(category)).thenReturn(new CategoryEntity("Food"));
+        when(userService.getOneUserByID(any(UUID.class))).thenReturn(user);
+        when(categoryRepository.findByUserEntityAndID(any(UUID.class), any(UUID.class))).thenReturn(Optional.of(category));
+        when(categoryRepository.save(any(CategoryEntity.class))).thenReturn(new CategoryEntity("Food"));
 
         CategoryEntity finalCategory = categoryService.updateCategoryByID(id, id, dto);
 
@@ -345,9 +344,9 @@ public class CategoryServiceTest {
     public void updateCategory_ThrowsCategoryNotSavedException(){
         CategoryUpdateDto dto = new CategoryUpdateDto("Food");
 
-        when(userService.getOneUserByID(id)).thenReturn(user);
-        when(categoryRepository.findByUserEntityAndID(id,id)).thenReturn(Optional.of(category));
-        when(categoryRepository.save(category)).thenReturn(new CategoryEntity(){});
+        when(userService.getOneUserByID(any(UUID.class))).thenReturn(user);
+        when(categoryRepository.findByUserEntityAndID(any(UUID.class),any(UUID.class))).thenReturn(Optional.of(category));
+        when(categoryRepository.save(any(CategoryEntity.class))).thenReturn(new CategoryEntity(){});
 
         Assertions.assertThrows(CategoryNotSavedException.class, () -> categoryService.updateCategoryByID(id, id, dto));
 
@@ -361,8 +360,8 @@ public class CategoryServiceTest {
     public void updateCategory_ThrowsCategoryNotFoundException(){
         CategoryUpdateDto dto = new CategoryUpdateDto("Food");
 
-        when(userService.getOneUserByID(id)).thenReturn(user);
-        when(categoryRepository.findByUserEntityAndID(id, id)).thenReturn(Optional.empty());
+        when(userService.getOneUserByID(any(UUID.class))).thenReturn(user);
+        when(categoryRepository.findByUserEntityAndID(any(UUID.class), any(UUID.class))).thenReturn(Optional.empty());
 
         Assertions.assertThrows(CategoryNotFoundException.class, () -> categoryService.updateCategoryByID(id, id, dto));
 
@@ -374,7 +373,7 @@ public class CategoryServiceTest {
     public void updateCategory_ThrowsUserNotFoundException(){
         CategoryUpdateDto dto = new CategoryUpdateDto("Food");
 
-        when(userService.getOneUserByID(id)).thenThrow(new UserNotFoundException());
+        when(userService.getOneUserByID(any(UUID.class))).thenThrow(new UserNotFoundException());
 
         Assertions.assertThrows(UserNotFoundException.class, () -> categoryService.updateCategoryByID(id, id, dto));
 
