@@ -31,9 +31,13 @@ public class UserServiceTest {
     @Mock
     private UserRepository userRepository;
 
+    private UUID id;
+
     @BeforeEach
     public void setUp(){
         MockitoAnnotations.openMocks(this);
+
+        id = UUID.randomUUID();
     }
 
     @Test
@@ -101,9 +105,7 @@ public class UserServiceTest {
         //ASSERTIONS
 
         Assertions.assertNotNull(user);
-        Assertions.assertEquals("Arthur Barbosa Donato", user.getName());
-        Assertions.assertEquals("arthur@gmail.com", user.getEmail());
-        Assertions.assertEquals("0971273984", user.getCPF());
+        Assertions.assertEquals(firstUser, user);
 
         verify(userRepository, times(1)).save(user);
 
@@ -141,6 +143,12 @@ public class UserServiceTest {
     }
 
     @Test
+    public void createNewUserTest_ThrowsIllegalArgumentException(){
+
+        Assertions.assertThrows(IllegalArgumentException.class, () -> userService.createNewUser(null));
+    }
+
+    @Test
     public void getAllUsers_ReturnUserList() {
         //ARRANGE
         List<UserEntity> userList = Arrays.asList(new UserEntity("094586749", "Arthur", "arthur@gmail.com", "123"), new UserEntity("1238974423", "Isabella", "isabella@gmail.com", "1234"));
@@ -153,11 +161,7 @@ public class UserServiceTest {
 
         //ASSERTIONS
 
-        Assertions.assertEquals(userList.size(), finalList.size());
-        Assertions.assertEquals(userList.getFirst().getName(), finalList.getFirst().getName());
-        Assertions.assertEquals(userList.getLast().getName(), finalList.getLast().getName());
-        Assertions.assertEquals(userList.getFirst().getEmail(), finalList.getFirst().getEmail());
-        Assertions.assertEquals(userList.getLast().getEmail(), finalList.getLast().getEmail());
+        Assertions.assertEquals(userList, finalList);
 
         verify(userRepository, times(1)).findAll();
 
@@ -186,9 +190,7 @@ public class UserServiceTest {
         Optional<UserEntity> userToReturn = Optional.of(new UserEntity("0971273984", "Arthur Barbosa Donato", "arthur@gmail.com", "123"));
         UserEntity userExpected = new UserEntity("0971273984", "Arthur Barbosa Donato", "arthur@gmail.com", "123");
 
-        UUID id = UUID.randomUUID();
-
-        when(userRepository.findById(id)).thenReturn(userToReturn);
+        when(userRepository.findById(any(UUID.class))).thenReturn(userToReturn);
         //ACT
 
         UserEntity user = userService.getOneUserByID(id);
@@ -196,10 +198,7 @@ public class UserServiceTest {
         //ASSERTIONS
 
         Assertions.assertNotNull(user);
-        Assertions.assertEquals(userExpected.getName(), user.getName());
-        Assertions.assertEquals(userExpected.getCPF(), user.getCPF());
-        Assertions.assertEquals(userExpected.getEmail(), user.getEmail());
-        Assertions.assertEquals(userExpected.getPassword(), user.getPassword());
+        Assertions.assertEquals(userExpected, user);
 
         verify(userRepository, times(1)).findById(id);
     }
@@ -207,9 +206,8 @@ public class UserServiceTest {
     @Test
     public void getOneUserByIDTest_ReturnUserNotFoundException(){
         //ARRANGE
-        UUID id = UUID.randomUUID();
 
-        when(userRepository.findById(id)).thenReturn(Optional.empty());
+        when(userRepository.findById(any(UUID.class))).thenReturn(Optional.empty());
 
         //ASSERTIONS + ACT
 
@@ -221,11 +219,9 @@ public class UserServiceTest {
     @Test
     public void deleteUserByIdTest_ReturnTrue(){
         //ARRANGE
-        UUID id = UUID.randomUUID();
         Optional<UserEntity> user = Optional.of(new UserEntity());
 
-
-        when(userRepository.findById(id)).thenReturn(user);
+        when(userRepository.findById(any(UUID.class))).thenReturn(user);
 
         //ACT
 
@@ -241,9 +237,8 @@ public class UserServiceTest {
     @Test
     public void deleteUserByIDTest_ThrowsUserNotFoundException(){
         //ARRANGE
-        UUID id = UUID.randomUUID();
 
-        when(userRepository.findById(id)).thenReturn(Optional.empty());
+        when(userRepository.findById(any(UUID.class))).thenReturn(Optional.empty());
         //ASSERTIONS + ACT
 
         Assertions.assertThrows(UserNotFoundException.class, () -> userService.deleteUserByID(id));
@@ -255,9 +250,8 @@ public class UserServiceTest {
     @Test
     public void deleteUserByIDTest_ThrowsNullPointerException(){
         //ARRANGE
-        UUID id = UUID.randomUUID();
 
-        when(userRepository.findById(id)).thenReturn(null);
+        when(userRepository.findById(any(UUID.class))).thenReturn(null);
         //ASSERTIONS + ACT
 
         Assertions.assertThrows(NullPointerException.class, () -> userService.deleteUserByID(id));
@@ -268,13 +262,12 @@ public class UserServiceTest {
     @Test
     public void updateUserByID_ReturnUserUpdated(){
         //ARRANGE
-        UUID id = UUID.randomUUID();
         UserUpdateDto userUpdateDto = new UserUpdateDto("Isabella", "asdasd");
 
         UserEntity user = new UserEntity("435304985", "Arthur", "asdjah", "123");
 
-        when(userRepository.findById(id)).thenReturn(Optional.of(user));
-        when(userRepository.save(user)).thenReturn(user);
+        when(userRepository.findById(any(UUID.class))).thenReturn(Optional.of(user));
+        when(userRepository.save(any(UserEntity.class))).thenReturn(user);
         //ACT
 
         UserEntity returnedUser = userService.updateUserByID(id, userUpdateDto);
@@ -291,11 +284,10 @@ public class UserServiceTest {
 
     @Test
     public void updateUserByIDTest_ThrowsUserNotFoundException(){
-        UUID id = UUID.randomUUID();
 
         UserUpdateDto userUpdateDto = new UserUpdateDto("Arthur", "arthur");
 
-        when(userRepository.findById(id)).thenReturn(Optional.empty());
+        when(userRepository.findById(any(UUID.class))).thenReturn(Optional.empty());
 
         Assertions.assertThrows(UserNotFoundException.class, () -> userService.updateUserByID(id, userUpdateDto));
 
@@ -304,14 +296,13 @@ public class UserServiceTest {
 
     @Test
     public void updateUserByIDTest_ThrowsUserNotSavedException(){
-        UUID id = UUID.randomUUID();
 
         UserUpdateDto userUpdateDto = new UserUpdateDto("Arthur", "arthur");
 
         UserEntity userSubClass = new UserEntity(){};
 
-        when(userRepository.findById(id)).thenReturn(Optional.of(new UserEntity()));
-        when(userRepository.save(new UserEntity())).thenReturn(userSubClass);
+        when(userRepository.findById(any(UUID.class))).thenReturn(Optional.of(new UserEntity()));
+        when(userRepository.save(any(UserEntity.class))).thenReturn(userSubClass);
 
         Assertions.assertThrows(UserNotSavedException.class, () -> userService.updateUserByID(id, userUpdateDto));
 
@@ -319,11 +310,10 @@ public class UserServiceTest {
 
     @Test
     public void updateUserByIDTest_ThrowsNullPointerException(){
-        UUID id = UUID.randomUUID();
 
         UserUpdateDto userUpdateDto = new UserUpdateDto("Arthur", "artur");
 
-        when(userRepository.findById(id)).thenReturn(null);
+        when(userRepository.findById(any(UUID.class))).thenReturn(null);
 
         Assertions.assertThrows(NullPointerException.class, () -> userService.updateUserByID(id, userUpdateDto));
     }

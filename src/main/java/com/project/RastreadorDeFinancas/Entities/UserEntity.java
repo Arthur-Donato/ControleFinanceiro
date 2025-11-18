@@ -8,6 +8,7 @@ import org.springframework.hateoas.RepresentationModel;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.Objects;
 import java.util.UUID;
 
 @Entity
@@ -57,5 +58,16 @@ public class UserEntity extends RepresentationModel<UserEntity> implements Seria
 
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        UserEntity that = (UserEntity) o;
+        return Objects.equals(getID(), that.getID()) && Objects.equals(getCPF(), that.getCPF()) && Objects.equals(getName(), that.getName()) && Objects.equals(getEmail(), that.getEmail()) && Objects.equals(getPassword(), that.getPassword());
+    }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), getID(), getCPF(), getName(), getEmail(), getPassword());
+    }
 }
