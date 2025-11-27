@@ -26,12 +26,6 @@ public class UserEntity extends RepresentationModel<UserEntity> implements Seria
     @Getter
     private UUID ID;
 
-
-    @Column(nullable = false, unique = true)
-    @Setter
-    @Getter
-    private String CPF;
-
     @Column(nullable = false)
     @Setter
     @Getter
@@ -47,8 +41,7 @@ public class UserEntity extends RepresentationModel<UserEntity> implements Seria
     @Getter
     private String password;
 
-    public UserEntity(@Nonnull String CPF, @Nonnull String name, @Nonnull String email, @Nonnull String password){
-        this.CPF = CPF;
+    public UserEntity(@Nonnull String name, @Nonnull String email, @Nonnull String password){
         this.name= name;
         this.email = email;
         this.password = password;
@@ -63,11 +56,11 @@ public class UserEntity extends RepresentationModel<UserEntity> implements Seria
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
         UserEntity that = (UserEntity) o;
-        return Objects.equals(getID(), that.getID()) && Objects.equals(getCPF(), that.getCPF()) && Objects.equals(getName(), that.getName()) && Objects.equals(getEmail(), that.getEmail()) && Objects.equals(getPassword(), that.getPassword());
+        return Objects.equals(getID(), that.getID()) && Objects.equals(getName(), that.getName()) && Objects.equals(getEmail(), that.getEmail()) && Objects.equals(getPassword(), that.getPassword());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), getID(), getCPF(), getName(), getEmail(), getPassword());
+        return Objects.hash(super.hashCode(), getID(), getName(), getEmail(), getPassword());
     }
 }

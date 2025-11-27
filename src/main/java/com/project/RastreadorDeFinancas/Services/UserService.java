@@ -2,6 +2,7 @@ package com.project.RastreadorDeFinancas.Services;
 
 import com.project.RastreadorDeFinancas.Controller.UserController;
 import com.project.RastreadorDeFinancas.Dtos.CreateUserDto;
+import com.project.RastreadorDeFinancas.Dtos.LoginRequestDto;
 import com.project.RastreadorDeFinancas.Dtos.UserUpdateDto;
 import com.project.RastreadorDeFinancas.Entities.UserEntity;
 import com.project.RastreadorDeFinancas.Exceptions.UserNotFoundException;
@@ -100,5 +101,16 @@ public class UserService {
             return true;
         }
         throw new UserNotSavedException();
+    }
+
+    public UserEntity verifyLogin(@RequestBody LoginRequestDto loginRequestDto){
+        Optional<UserEntity> possibleUser = this.userRepository.getUserEntityByEmailAndPassword(loginRequestDto.email(), loginRequestDto.password());
+
+        if(possibleUser.isPresent()){
+            return possibleUser.get();
+        }
+        else{
+            throw new UserNotFoundException();
+        }
     }
 }
