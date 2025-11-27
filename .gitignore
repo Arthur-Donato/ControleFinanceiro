@@ -31,3 +31,13 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### BACKEND / JAVA ###
+target/ 
+*.class
+*.jar
+*.war
+
+
+### FRONTEND / ANGULAR ###
+node.modules/

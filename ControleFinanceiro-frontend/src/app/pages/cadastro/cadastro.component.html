@@ -1,0 +1,49 @@
+<div class="cadastro-container"> 
+
+    <div class="cadastro-titulo">
+        <h1>Controle Financeiro</h1>
+    </div>
+
+    <div class="cadastro-card"> 
+        <h2>Bem-vindo</h2>
+        <p class="subtitle">Informe suas credenciais para realizar o cadastro</p>
+
+        <form [formGroup]="cadastroForm" (ngSubmit)="onSubmit()">
+
+            <div class="form-group">
+                <label for="nomeCompleto">Nome Completo</label>
+                <input 
+                    id="nomeCompleto"
+                    type="nomeCompleto"
+                    formControlName="nomeCompleto"
+                    placeholder="José da Silva"
+                    [class.invalid]="cadastroForm.get('email')?.invalid && cadastroForm.get('email')?.touched">
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input
+                    id="email"
+                    type="email"
+                    formControlName = "email"
+                    placeholder="exemplo@gmail.com"
+                    >
+            </div>
+
+            <div class="form-group">
+                <label for="password">Senha</label>
+                <input 
+                    id="password"
+                    type="password"
+                    formControlName="password"
+                    placeholder="Sua senha">
+            </div>
+
+            <button type="submit" [disabled]="cadastroForm.invalid">CONFIRMAR CADASTRO</button>
+
+            <button routerLink="/login">VOLTAR</button>
+        </form>
+
+        
+    </div>
+</div>>

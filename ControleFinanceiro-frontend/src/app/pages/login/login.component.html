@@ -1,0 +1,40 @@
+<div class="login-container">
+  <div class = "login-title"> 
+    <h1>Controle Financeiro</h1>
+  </div>
+  <div class="login-card">
+    <h2>Bem-vindo</h2>
+    <p class="subtitle">Insira suas credenciais para continuar</p>
+
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+      
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input 
+          id="email" 
+          type="email" 
+          formControlName="email" 
+          placeholder="exemplo@email.com"
+          [class.invalid]="loginForm.get('email')?.invalid && loginForm.get('email')?.touched"
+        >
+      </div>
+
+      <div class="form-group">
+        <label for="password">Senha</label>
+        <input 
+          id="password" 
+          type="password" 
+          formControlName="password" 
+          placeholder="Sua senha"
+        >
+      </div>
+
+      <button type="submit" [disabled]="loginForm.invalid">
+        ACESSAR SISTEMA
+      </button>
+
+      <a class="labelCadastro" routerLink="/cadastro">Ainda não possui um cadastro ? <span style="color: #007bff;"> Cadastre-se agora </span> </a>
+
+    </form>
+  </div>
+</div>
