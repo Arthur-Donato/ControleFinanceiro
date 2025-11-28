@@ -40,4 +40,5 @@ target/
 
 
 ### FRONTEND / ANGULAR ###
-node.modules/
+.node.modules/
+.angular/

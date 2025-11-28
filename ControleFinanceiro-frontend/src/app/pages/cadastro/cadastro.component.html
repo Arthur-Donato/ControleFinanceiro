@@ -11,13 +11,13 @@
         <form [formGroup]="cadastroForm" (ngSubmit)="onSubmit()">
 
             <div class="form-group">
-                <label for="nomeCompleto">Nome Completo</label>
+                <label for="name">Nome Completo</label>
                 <input 
-                    id="nomeCompleto"
-                    type="nomeCompleto"
-                    formControlName="nomeCompleto"
+                    id="name"
+                    type="name"
+                    formControlName="name"
                     placeholder="José da Silva"
-                    [class.invalid]="cadastroForm.get('email')?.invalid && cadastroForm.get('email')?.touched">
+                    [class.invalid]="cadastroForm.get('name')?.invalid && cadastroForm.get('name')?.touched">
             </div>
 
             <div class="form-group">
