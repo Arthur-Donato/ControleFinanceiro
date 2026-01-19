@@ -19,10 +19,58 @@
 }
 
 .homeTitle-container {
-    text-align:center;
+    display:flex;
+    flex-direction: row;
+    text-align: center;
     background-color:#d9d9d9;
     width:100vw;
     height:7%;
+}
+
+h1{
+    margin-left: 40%;
+    margin-right: 20%;
+}
+
+.accountButton{
+    width: 3%;
+    height: 90%;
+
+    /* Centralizando o SVG */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background-color: #d9d9d9;
+    color:white;
+    border: none;
+    border-radius:50%;
+
+    cursor:pointer;
+    padding: 0;
+    transition: background 0.3s;
+
+    margin-left:10%;
+    margin-right: 2%;
+}
+
+.signOutButton{
+    width: 3%;
+    height:90%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background-color: #d9d9d9;
+    border: none;
+    border-radius: 50%;
+
+    cursor: pointer;
+    padding: 0;
+    transition: background 0.3s;
+
+
 }
 
 .homeUsuario-container {
@@ -35,12 +83,31 @@
 
 .informacoesUsuario-container{
     background-color:#d9d9d9;
-    width: 45%;
-    height:75%;
-    margin-top:3%;
+    width: 55%;
+    height:90%;
+
+    margin-top:1%;
     margin-bottom:3%;
     margin-left:1%;
 
+}
+
+.graphic-container{
+
+    width: 15%;
+    height: 90%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background-color: #d9d9d9;
+    border-radius: 50%;
+
+    margin-top: 1%;
+    margin-bottom: 3%;
+    margin-left: 20%; 
+    
 }
 
 .homeInformacoes-container {
@@ -72,13 +139,28 @@
 }
 
 .adicionarReceita-button{
-    margin-left: 8%;
+    width: 8%;
+    height: 90%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background-color: #d9d9d9;
+    border: none;
+    border-radius: 50%;
+
+    cursor: pointer;
+    padding: 0;
+    transition: background 0.3s;
+
+    margin-left: 12%;
 }
 
 .listarReceitas-container{
     width:100%;
     height:90%;
-    background-color:red;
+    background-color:#d9d9d9;
 }
 
 .despesas-container {
@@ -101,11 +183,26 @@
 }
 
 .adicionarDespesa-button{
-    margin-left: 6%;
+    width: 8%;
+    height: 90%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background-color: #d9d9d9;
+    border: none;
+    border-radius: 50%;
+
+    cursor: pointer;
+    padding: 0;
+    transition: background 0.3s;
+
+    margin-left: 10%;
 }
 
 .listarDespesas-container{
-    background-color:red;
+    background-color: #d9d9d9;
     height:90%;
     width:100%;
 
@@ -129,11 +226,26 @@
 }
 
 .adicionarCategoria-button{
-    margin-left: 4%;
+    width: 8%;
+    height: 90%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background-color: #d9d9d9;
+    border: none;
+    border-radius: 50%;
+
+    cursor: pointer;
+    padding: 0;
+    transition: background 0.3s;
+
+    margin-left: 8%;
 }
 
 .listarCategorias-container{
-    background-color:red;
+    background-color: #d9d9d9;
     height:90%;
     width:100%;
 }
