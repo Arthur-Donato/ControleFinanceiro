@@ -35,7 +35,7 @@ export class LoginComponent {
         next: (resposta: any) => {
           console.log('Sucesso:', resposta);
           alert('Login realizado com sucesso! (Veja o console)');
-          this.router.navigate(['/home']); // Descomente quando criar a home
+          this.router.navigate(['/home']);
         },
         error: (erro: any) => {
           // Erro
