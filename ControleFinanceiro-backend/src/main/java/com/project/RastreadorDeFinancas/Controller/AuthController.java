@@ -2,6 +2,7 @@ package com.project.RastreadorDeFinancas.Controller;
 
 import com.project.RastreadorDeFinancas.Dtos.CreateUserDto;
 import com.project.RastreadorDeFinancas.Dtos.LoginRequestDto;
+import com.project.RastreadorDeFinancas.Dtos.UserUpdateDto;
 import com.project.RastreadorDeFinancas.Entities.UserEntity;
 import com.project.RastreadorDeFinancas.Exceptions.UserNotFoundException;
 import com.project.RastreadorDeFinancas.Exceptions.UserNotSavedException;
@@ -12,7 +13,10 @@ import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
 
 @RestController
 @RequestMapping(path = "/auth")
@@ -52,4 +56,24 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         }
     }
+
+    @PutMapping(path = "/update/{id}")
+    public ResponseEntity<UserEntity> updateUser(@PathVariable(value = "id") UUID userID, @RequestBody @Validated UserUpdateDto userUpdateDto){
+
+        System.out.println("Este método foi executado");
+        try{
+            UserEntity userUpdated = this.userService.updateUserByID(userID, userUpdateDto);
+
+            return ResponseEntity.status(HttpStatus.OK).body(userUpdated);
+
+        }catch(Exception e){
+            if(e.getClass() == UserNotFoundException.class){
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            }
+
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        }
+
+    }
+
 }

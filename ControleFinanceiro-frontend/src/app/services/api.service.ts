@@ -19,5 +19,12 @@ export class ApiService {
   fazerCadastro(dadosCadastro: any): Observable<any> {
     return this.http.post(`${this.apiUrl}/cadastro`, dadosCadastro, {responseType: 'text' as 'json'});
   }
+
+  updateUserInfos(dadosUpdate: any, userID: any): Observable<any> {
+    console.log('O metodo da API esta funcionando');
+    console.log( 'O formulario enviado é o seguinte', dadosUpdate);
+
+    return this.http.put(`${this.apiUrl}/update/${userID}`, dadosUpdate, {responseType: 'text' as 'json'});
+  }
   
 }

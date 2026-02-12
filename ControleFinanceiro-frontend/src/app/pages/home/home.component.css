@@ -317,11 +317,17 @@ h3{
 
 }
 
-.infoName{
+form{
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.areaInput{
     display: flex;
     flex-direction: row;
     background:white;
-    height: 8%;
+    height: 10%;
     width: 90%;
     border-radius: 16px;
     margin-left: 3%;
@@ -334,7 +340,7 @@ h3{
     margin-left: 4%;
 }
 
-.inputName{
+.inputInfo{
     width: 90%;
     height: 100%;
     border: none;
@@ -342,15 +348,20 @@ h3{
     margin-left: 1%;
 }
 
-.inputName:focus{
+.inputInfo:focus{
     border: none;
     outline: none;
 }
 
 .btn-saveInfoUser{
-    height: 7%;
+    height: 10%;
     width: 90%;
     margin-left: 3%;
     margin-top: 3%;
     border-radius: 16px;
+}
+
+.btn-saveInfoUser:disabled {
+  background-color: red;
+  cursor: not-allowed;
 }

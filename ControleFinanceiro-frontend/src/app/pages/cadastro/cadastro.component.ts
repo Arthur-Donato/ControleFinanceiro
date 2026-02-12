@@ -35,7 +35,7 @@ export class CadastroComponent {
         next: (resposta: any) => {
           console.log('O usuário foi cadastrado com sucesso!');
           alert('Cadastro realizado com sucesso!');
-
+          this.router.navigate(['/login']);
 
         },
         error: (erro: any) => {

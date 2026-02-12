@@ -4,6 +4,7 @@ import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angula
 import { Router } from '@angular/router';
 import { ApiService } from '../../services/api.service';
 import { RouterLink } from '@angular/router';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -16,6 +17,7 @@ export class LoginComponent {
   loginForm: FormGroup;
 
   constructor(
+    private authService: AuthService,
     private fb: FormBuilder,
     private service: ApiService,
     private router: Router
@@ -28,13 +30,17 @@ export class LoginComponent {
   }
 
   onSubmit() {
-    if (this.loginForm.valid) {
+    if (this.isValidForm(this.loginForm)) {
       console.log('Enviando dados...', this.loginForm.value);
 
       this.service.fazerLogin(this.loginForm.value).subscribe({
         next: (resposta: any) => {
           console.log('Sucesso:', resposta);
           alert('Login realizado com sucesso! (Veja o console)');
+
+
+          this.authService.setUsuario(resposta);
+
           this.router.navigate(['/home']);
         },
         error: (erro: any) => {
@@ -45,4 +51,8 @@ export class LoginComponent {
       });
     }
   }
+
+  isValidForm(form: FormGroup){
+      return form.valid;
+    }
 }

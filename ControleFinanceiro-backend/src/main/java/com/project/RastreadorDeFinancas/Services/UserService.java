@@ -83,11 +83,11 @@ public class UserService {
 
         BeanUtils.copyProperties(userUpdateDto, userAux);
 
-        if(!(userAux.getName() == null)){
+        if(!(userAux.getName().isEmpty())){
             user.setName(userAux.getName());
         }
 
-        if(!(userAux.getEmail() == null)){
+        if(!(userAux.getEmail().isEmpty())){
             user.setEmail(userAux.getEmail());
         }
 
