@@ -54,6 +54,7 @@ public class SecurityConfig {
                 }))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**").permitAll()
+                        .requestMatchers("/category/**").permitAll()
                         .requestMatchers("/user/**").hasRole("ADMIN")
                         .requestMatchers("/category/**").hasRole("ADMIN")
                         .requestMatchers("/transaction/**").hasRole("ADMIN").anyRequest().authenticated()

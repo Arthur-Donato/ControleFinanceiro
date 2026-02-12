@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root',
 })
 
-export class ApiService {
+export class ApiUserService {
 
   private apiUrl = "http://localhost:8081/auth";
 
@@ -21,8 +21,6 @@ export class ApiService {
   }
 
   updateUserInfos(dadosUpdate: any, userID: any): Observable<any> {
-    console.log('O metodo da API esta funcionando');
-    console.log( 'O formulario enviado é o seguinte', dadosUpdate);
 
     return this.http.put(`${this.apiUrl}/update/${userID}`, dadosUpdate, {responseType: 'text' as 'json'});
   }

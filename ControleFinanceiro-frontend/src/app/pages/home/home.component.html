@@ -138,7 +138,7 @@
         <div *ngSwitchCase="'usuario'" class="user-layout">
           <h1>Dados do Usuário</h1>
           <h3>Nome</h3>
-          <form [formGroup]="userEditForm" (ngSubmit)="onSubmit()">
+          <form [formGroup]="userEditForm" (ngSubmit)="onSubmitUserForm()">
             <div class="areaInput">
 
                 <input id="name" type="name" formControlName="name" placeholder="{{usuarioStorage?.name}}" class="inputInfo">
@@ -209,19 +209,17 @@
             <div *ngSwitchCase="'categoria'" class="category-layout">
                 <h1>Categoria</h1>
 
-                <form #categoryForm="ngForm">
+                <form [formGroup]="categoryForm" (ngSubmit)="onSubmitCategoryForm()">
                     <h3>Nome da Categoria:</h3>
                     <div class="areaInput">
-                        <input type="text"
-                               name="categoria"
-                               ngModel
-                               required
-                               pattern="/^[a-zA-ZÀ-ÿ]+\s+[a-zA-ZÀ-ÿ]+.*$/"
+                        <input id="name"
+                               type="name"
+                               formControlName="name"
                                placeholder="Lazer"
                                class="inputInfo">
                     </div>
 
-                    <button class="btn-saveInfoUser">Salvar</button>
+                    <button type="submit"  class="btn-saveInfoUser">Salvar</button>
 
                 </form>
                 

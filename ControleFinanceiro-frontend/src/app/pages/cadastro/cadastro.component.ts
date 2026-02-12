@@ -3,7 +3,7 @@ import {ReactiveFormsModule } from "@angular/forms";
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { ApiService } from '../../services/api.service';
+import { ApiUserService } from '../../services/api-user.service';
 import { RouterLink } from '@angular/router';
 
 @Component({
@@ -17,7 +17,7 @@ export class CadastroComponent {
 
   constructor(
     private fb: FormBuilder,
-    private service: ApiService,
+    private service: ApiUserService,
     private router: Router
   ){
     this.cadastroForm = this.fb.group({

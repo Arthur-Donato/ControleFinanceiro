@@ -1,6 +1,7 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { ApiService } from '../../services/api.service';
+import { ApiUserService } from '../../services/api-user.service';
+import { ApiCategoryService } from '../../services/api-category';
 import { RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormGroup, FormBuilder, Validators, FormsModule } from '@angular/forms';
@@ -24,8 +25,8 @@ export class HomeComponent implements OnInit{
   constructor(
     private authService: AuthService,
     private fb: FormBuilder,
-    private cd: ChangeDetectorRef,
-    private service: ApiService,
+    private userService: ApiUserService,
+    private categoryService: ApiCategoryService,
     private router: Router
   ){
     this.userEditForm = this.fb.group({
@@ -34,7 +35,7 @@ export class HomeComponent implements OnInit{
       password: ['', [Validators.minLength(5)]]
   }),
     this.categoryForm = this.fb.group({
-      name: ['', Validators.pattern(/^[a-zA-ZÀ-ÿ]+\s+[a-zA-ZÀ-ÿ]+.*$/)]
+      name: ['', []]
     })
   }
 
@@ -54,14 +55,13 @@ export class HomeComponent implements OnInit{
     this.exibirModal = false;
   }
 
-  onSubmit(){
+  onSubmitUserForm(){
 
     if(this.isFormValid(this.userEditForm)){
 
-      this.service.updateUserInfos(this.userEditForm.value, this.usuarioStorage?.id).subscribe({
+      this.userService.updateUserInfos(this.userEditForm.value, this.usuarioStorage?.id).subscribe({
         next: (resposta: any) => {
           alert('Seus dados foram atualizados com sucesso');
-          console.log('Os seus dados agora são', resposta);
 
           this.router.navigate(['/login']);
         },
@@ -69,6 +69,27 @@ export class HomeComponent implements OnInit{
           alert('Ocorreu um erro ao atualizar seus dados');
         }
       }); 
+    }
+  }
+
+  onSubmitCategoryForm(){
+
+    console.log(this.categoryForm.value);
+
+    if(this.categoryForm.valid){
+
+      console.log('Passei aq');
+      this.categoryService.criarCategoria(this.categoryForm.value, this.usuarioStorage?.id).subscribe({
+        next: (resposta: any) => {
+          alert('Categoria criada com sucesso!');
+
+          this.fecharModal();
+        },
+
+        error: (erro: any) => {
+          alert('Ocorreu um erro ao criar categoria');
+        }
+      });
     }
   }
 

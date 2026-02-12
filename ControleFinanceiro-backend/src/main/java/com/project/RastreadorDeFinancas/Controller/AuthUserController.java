@@ -21,14 +21,14 @@ import java.util.UUID;
 @RestController
 @RequestMapping(path = "/auth")
 @CrossOrigin(origins = "*")
-public class AuthController {
+public class AuthUserController {
 
     @Getter
     @Setter
     private UserService userService;
 
     @Autowired
-    public AuthController(UserRepository userRepository){
+    public AuthUserController(UserRepository userRepository){
         this.userService = new UserService(userRepository);
     }
 
@@ -59,6 +59,7 @@ public class AuthController {
 
     @PutMapping(path = "/update/{id}")
     public ResponseEntity<UserEntity> updateUser(@PathVariable(value = "id") UUID userID, @RequestBody @Validated UserUpdateDto userUpdateDto){
+
 
         try{
             UserEntity userUpdated = this.userService.updateUserByID(userID, userUpdateDto);
