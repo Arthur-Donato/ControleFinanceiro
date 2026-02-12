@@ -22,7 +22,6 @@ export class LoginComponent {
     private service: ApiService,
     private router: Router
   ) {
-    // Definimos os campos que o Java espera (email e password)
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required, Validators.minLength(5)]]
@@ -44,7 +43,6 @@ export class LoginComponent {
           this.router.navigate(['/home']);
         },
         error: (erro: any) => {
-          // Erro
           console.error('Erro:', erro);
           alert('Falha no login. Verifique email e senha.');
         }

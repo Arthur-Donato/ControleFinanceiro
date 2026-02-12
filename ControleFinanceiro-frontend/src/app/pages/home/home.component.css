@@ -2,7 +2,7 @@
   display: block;
   height: 100vh;
   width: 100vw;
-  overflow: hidden; /* Corta qualquer tentativa de criar barra de rolagem */
+  overflow: hidden;
 }
 
 
@@ -36,7 +36,6 @@
     width: 3%;
     height: 90%;
 
-    /* Centralizando o SVG */
     display: flex;
     align-items: center;
     justify-content: center;
@@ -271,19 +270,18 @@ h3{
 
 .card:hover { transform: translateY(-5px); }
 
-/* 3. O MODAL (O segredo da janela centralizada) */
 .modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.5); /* Fundo escurecido */
+  background: rgba(0, 0, 0, 0.5);
   display: flex;
-  justify-content: center; /* Centraliza horizontal */
-  align-items: center;     /* Centraliza vertical */
+  justify-content: center;
+  align-items: center;
   z-index: 1000;
-  backdrop-filter: blur(4px); /* Efeito de desfoque na home */
+  backdrop-filter: blur(4px);
 }
 
 .modal-janela {
@@ -362,6 +360,14 @@ form{
 }
 
 .btn-saveInfoUser:disabled {
-  background-color: red;
+  background-color: a5a4a4;
   cursor: not-allowed;
+}
+
+.category-layout{
+    display: flex;
+    flex-direction: column;
+    background-color: #d9d9d9;
+    height: 100%;
+    width: 100%;
 }

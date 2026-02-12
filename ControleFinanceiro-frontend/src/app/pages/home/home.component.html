@@ -39,7 +39,7 @@
             <p>Olá, {{ usuarioStorage?.name }}!</p>
         </div>
 
-        <div class="graphic-container"> Teste</div>
+        <div class="graphic-container"> </div>
 
     </div>
 
@@ -205,8 +205,27 @@
           <button class="btn-save">Registrar</button>
         </div>
 
-        <div *ngSwitchCase=" 'categoria' ">
+        <div *ngSwitchCase=" 'categoria' " class="full-height-container">
+            <div *ngSwitchCase="'categoria'" class="category-layout">
+                <h1>Categoria</h1>
 
+                <form #categoryForm="ngForm">
+                    <h3>Nome da Categoria:</h3>
+                    <div class="areaInput">
+                        <input type="text"
+                               name="categoria"
+                               ngModel
+                               required
+                               pattern="/^[a-zA-ZÀ-ÿ]+\s+[a-zA-ZÀ-ÿ]+.*$/"
+                               placeholder="Lazer"
+                               class="inputInfo">
+                    </div>
+
+                    <button class="btn-saveInfoUser">Salvar</button>
+
+                </form>
+                
+            </div>
 
         </div>
       </div>

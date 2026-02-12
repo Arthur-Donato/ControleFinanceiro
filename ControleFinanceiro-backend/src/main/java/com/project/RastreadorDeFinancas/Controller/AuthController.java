@@ -60,7 +60,6 @@ public class AuthController {
     @PutMapping(path = "/update/{id}")
     public ResponseEntity<UserEntity> updateUser(@PathVariable(value = "id") UUID userID, @RequestBody @Validated UserUpdateDto userUpdateDto){
 
-        System.out.println("Este método foi executado");
         try{
             UserEntity userUpdated = this.userService.updateUserByID(userID, userUpdateDto);
 

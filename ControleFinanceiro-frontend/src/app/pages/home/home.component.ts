@@ -3,20 +3,20 @@ import { Router } from '@angular/router';
 import { ApiService } from '../../services/api.service';
 import { RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule, FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { ReactiveFormsModule, FormGroup, FormBuilder, Validators, FormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
 import { UsuarioInterface } from '../../interfaces/usuario';
-// Trabalhar com os imports de formularios
 
 @Component({
   selector: 'app-home',
-  imports: [RouterLink, CommonModule, ReactiveFormsModule],
+  imports: [RouterLink, CommonModule, ReactiveFormsModule, FormsModule],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css',
 })
 export class HomeComponent implements OnInit{
   usuarioStorage: UsuarioInterface | null = null;
   userEditForm: FormGroup;
+  categoryForm: FormGroup;
 
   exibirModal = false;
   tipoModal: 'usuario' | 'receita' | 'despesa' | 'categoria' = 'usuario';
@@ -32,7 +32,10 @@ export class HomeComponent implements OnInit{
       name: ['', [Validators.minLength(3), Validators.pattern(/^[a-zA-ZÀ-ÿ]+\s+[a-zA-ZÀ-ÿ]+.*$/)]],
       email: ['', [Validators.email]],
       password: ['', [Validators.minLength(5)]]
-  });
+  }),
+    this.categoryForm = this.fb.group({
+      name: ['', Validators.pattern(/^[a-zA-ZÀ-ÿ]+\s+[a-zA-ZÀ-ÿ]+.*$/)]
+    })
   }
 
   ngOnInit() {
@@ -51,13 +54,9 @@ export class HomeComponent implements OnInit{
     this.exibirModal = false;
   }
 
-  //Método para enviar formulário com as informações para edição de um usuário
   onSubmit(){
+
     if(this.isFormValid(this.userEditForm)){
-
-      console.log('Enviando dados para minha API em java');
-
-      console.log('O usuario possui o seguinte ID', this.usuarioStorage?.id);
 
       this.service.updateUserInfos(this.userEditForm.value, this.usuarioStorage?.id).subscribe({
         next: (resposta: any) => {
@@ -75,5 +74,11 @@ export class HomeComponent implements OnInit{
 
   isFormValid(form: FormGroup){
     return form.valid;
+  }
+
+  logOut(){
+    this.authService.logout();
+
+    this.router.navigate(['/login']);
   }
 }

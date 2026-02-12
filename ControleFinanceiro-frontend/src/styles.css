@@ -1,14 +1,11 @@
-/* You can add global styles to this file, and also import other style files */
-/* Isso remove as margens que o navegador coloca por padrão */
 html, body {
   margin: 0;
   padding: 0;
   width: 100%;
   height: 100%;
-  overflow: hidden; /* Isso garante que nada escape da tela principal */
+  overflow: hidden; 
 }
 
-/* Garante que o cálculo de tamanho inclua bordas e preenchimentos */
 * {
   box-sizing: border-box;
 }
