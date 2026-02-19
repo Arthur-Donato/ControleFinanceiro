@@ -1,7 +1,6 @@
-package com.project.RastreadorDeFinancas.Dtos;
+package com.project.RastreadorDeFinancas.Dtos.Response;
 
 import com.project.RastreadorDeFinancas.Entities.CategoryEntity;
-import com.project.RastreadorDeFinancas.Entities.UserEntity;
 
 public record CategoryResponseDto(String nameCategory, String nameUser) {
 

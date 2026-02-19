@@ -1,4 +1,4 @@
-package com.project.RastreadorDeFinancas.Dtos;
+package com.project.RastreadorDeFinancas.Dtos.Response;
 
 import com.project.RastreadorDeFinancas.Entities.UserEntity;
 

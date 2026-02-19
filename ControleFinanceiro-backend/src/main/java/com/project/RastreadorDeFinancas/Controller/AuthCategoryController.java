@@ -1,6 +1,7 @@
 package com.project.RastreadorDeFinancas.Controller;
 
-import com.project.RastreadorDeFinancas.Dtos.CreateCategoryDto;
+import com.project.RastreadorDeFinancas.Dtos.Create.CreateCategoryDto;
+import com.project.RastreadorDeFinancas.Dtos.Response.CategoryResponseDto;
 import com.project.RastreadorDeFinancas.Entities.CategoryEntity;
 import com.project.RastreadorDeFinancas.Exceptions.CategoryNotSavedException;
 import com.project.RastreadorDeFinancas.Exceptions.UserNotFoundException;
@@ -49,6 +50,13 @@ public class AuthCategoryController {
             else{
                 return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
             }
+        }
+    }
+
+    @GetMapping(path = "/get/{id}")
+    public ResponseEntity<CategoryResponseDto> getAllCategories(@PathVariable(value = "id") UUID userID){
+        try{
+
         }
     }
 }

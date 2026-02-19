@@ -1,4 +1,4 @@
-package com.project.RastreadorDeFinancas.Dtos;
+package com.project.RastreadorDeFinancas.Dtos.Update;
 
 import jakarta.annotation.Nonnull;
 

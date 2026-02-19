@@ -1,8 +1,8 @@
 package com.project.RastreadorDeFinancas.Controller;
 
-import com.project.RastreadorDeFinancas.Dtos.CreateUserDto;
-import com.project.RastreadorDeFinancas.Dtos.UserResponseDto;
-import com.project.RastreadorDeFinancas.Dtos.UserUpdateDto;
+import com.project.RastreadorDeFinancas.Dtos.Create.CreateUserDto;
+import com.project.RastreadorDeFinancas.Dtos.Response.UserResponseDto;
+import com.project.RastreadorDeFinancas.Dtos.Update.UserUpdateDto;
 import com.project.RastreadorDeFinancas.Entities.UserEntity;
 import com.project.RastreadorDeFinancas.Exceptions.UserNotFoundException;
 import com.project.RastreadorDeFinancas.Repository.UserRepository;

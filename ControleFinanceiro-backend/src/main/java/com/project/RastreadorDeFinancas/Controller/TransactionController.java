@@ -1,8 +1,8 @@
 package com.project.RastreadorDeFinancas.Controller;
 
-import com.project.RastreadorDeFinancas.Dtos.CreateTransactionDto;
-import com.project.RastreadorDeFinancas.Dtos.TransactionResponseDto;
-import com.project.RastreadorDeFinancas.Dtos.TransactionUpdateDto;
+import com.project.RastreadorDeFinancas.Dtos.Create.CreateTransactionDto;
+import com.project.RastreadorDeFinancas.Dtos.Response.TransactionResponseDto;
+import com.project.RastreadorDeFinancas.Dtos.Update.TransactionUpdateDto;
 import com.project.RastreadorDeFinancas.Entities.TransactionEntity;
 import com.project.RastreadorDeFinancas.Exceptions.TransactionNotFoundException;
 import com.project.RastreadorDeFinancas.Exceptions.UserNotFoundException;

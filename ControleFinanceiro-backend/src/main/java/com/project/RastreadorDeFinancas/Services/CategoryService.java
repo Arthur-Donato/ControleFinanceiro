@@ -1,8 +1,8 @@
 package com.project.RastreadorDeFinancas.Services;
 
 import com.project.RastreadorDeFinancas.Controller.CategoryController;
-import com.project.RastreadorDeFinancas.Dtos.CategoryUpdateDto;
-import com.project.RastreadorDeFinancas.Dtos.CreateCategoryDto;
+import com.project.RastreadorDeFinancas.Dtos.Update.CategoryUpdateDto;
+import com.project.RastreadorDeFinancas.Dtos.Create.CreateCategoryDto;
 import com.project.RastreadorDeFinancas.Entities.CategoryEntity;
 import com.project.RastreadorDeFinancas.Entities.UserEntity;
 import com.project.RastreadorDeFinancas.Exceptions.CategoryNotFoundException;

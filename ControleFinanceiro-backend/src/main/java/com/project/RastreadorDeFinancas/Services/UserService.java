@@ -1,9 +1,9 @@
 package com.project.RastreadorDeFinancas.Services;
 
 import com.project.RastreadorDeFinancas.Controller.UserController;
-import com.project.RastreadorDeFinancas.Dtos.CreateUserDto;
+import com.project.RastreadorDeFinancas.Dtos.Create.CreateUserDto;
 import com.project.RastreadorDeFinancas.Dtos.LoginRequestDto;
-import com.project.RastreadorDeFinancas.Dtos.UserUpdateDto;
+import com.project.RastreadorDeFinancas.Dtos.Update.UserUpdateDto;
 import com.project.RastreadorDeFinancas.Entities.UserEntity;
 import com.project.RastreadorDeFinancas.Exceptions.UserNotFoundException;
 import com.project.RastreadorDeFinancas.Exceptions.UserNotSavedException;

@@ -1,4 +1,4 @@
-package com.project.RastreadorDeFinancas.Dtos;
+package com.project.RastreadorDeFinancas.Dtos.Create;
 
 import jakarta.annotation.*;
 

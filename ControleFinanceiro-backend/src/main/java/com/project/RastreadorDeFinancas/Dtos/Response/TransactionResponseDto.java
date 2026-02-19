@@ -1,9 +1,8 @@
-package com.project.RastreadorDeFinancas.Dtos;
+package com.project.RastreadorDeFinancas.Dtos.Response;
 
 import com.project.RastreadorDeFinancas.Entities.TransactionEntity;
 
 import java.time.Instant;
-import java.util.Date;
 
 public record TransactionResponseDto(Double value, String type, String description, String categoryName, Instant date) {
 

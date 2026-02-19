@@ -1,8 +1,8 @@
 package com.project.RastreadorDeFinancas.Services;
 
 import com.project.RastreadorDeFinancas.Controller.TransactionController;
-import com.project.RastreadorDeFinancas.Dtos.CreateTransactionDto;
-import com.project.RastreadorDeFinancas.Dtos.TransactionUpdateDto;
+import com.project.RastreadorDeFinancas.Dtos.Create.CreateTransactionDto;
+import com.project.RastreadorDeFinancas.Dtos.Update.TransactionUpdateDto;
 import com.project.RastreadorDeFinancas.Entities.CategoryEntity;
 import com.project.RastreadorDeFinancas.Entities.TransactionEntity;
 import com.project.RastreadorDeFinancas.Entities.UserEntity;
