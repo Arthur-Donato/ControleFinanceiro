@@ -34,11 +34,9 @@ public class    UserController {
 
     @PostMapping
     public ResponseEntity<UserResponseDto> postUser(@RequestBody @Validated CreateUserDto createUserDto){
-        UserEntity newUser = userService.createNewUser(createUserDto);
+        UserResponseDto newUserDto = userService.createNewUser(createUserDto);
 
-        UserResponseDto userResponseDto = new UserResponseDto(newUser);
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(userResponseDto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(newUserDto);
     }
 
     @GetMapping(path = "/{id}")
@@ -80,9 +78,7 @@ public class    UserController {
     @PutMapping(path = "/put/{id}")
     public ResponseEntity<UserResponseDto> updateUser(@PathVariable (value = "id") UUID id, @RequestBody @Validated UserUpdateDto userUpdateDto){
         try{
-            UserEntity user = userService.updateUserByID(id, userUpdateDto);
-
-            UserResponseDto userResponseDto = new UserResponseDto(user);
+            UserResponseDto userResponseDto = userService.updateUserByID(id, userUpdateDto);
 
             return ResponseEntity.status(HttpStatus.OK).body(userResponseDto);
         } catch(UserNotFoundException e){

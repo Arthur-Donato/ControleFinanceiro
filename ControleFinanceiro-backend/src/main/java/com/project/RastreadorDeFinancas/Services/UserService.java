@@ -3,6 +3,7 @@ package com.project.RastreadorDeFinancas.Services;
 import com.project.RastreadorDeFinancas.Controller.UserController;
 import com.project.RastreadorDeFinancas.Dtos.Create.CreateUserDto;
 import com.project.RastreadorDeFinancas.Dtos.LoginRequestDto;
+import com.project.RastreadorDeFinancas.Dtos.Response.UserResponseDto;
 import com.project.RastreadorDeFinancas.Dtos.Update.UserUpdateDto;
 import com.project.RastreadorDeFinancas.Entities.UserEntity;
 import com.project.RastreadorDeFinancas.Exceptions.UserNotFoundException;
@@ -33,14 +34,14 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public UserEntity createNewUser(@RequestBody @Validated CreateUserDto createUserDto) throws UserNotSavedException{
+    public UserResponseDto createNewUser(@RequestBody @Validated CreateUserDto createUserDto) throws UserNotSavedException{
         UserEntity newUser = new UserEntity();
 
         BeanUtils.copyProperties(createUserDto, newUser);
 
         this.saveUser(newUser);
 
-        return newUser;
+        return new UserResponseDto(newUser.getName(), newUser.getEmail(), newUser.getID());
     }
 
     public List<UserEntity> getAllUsers() {
@@ -77,7 +78,7 @@ public class UserService {
 
     }
 
-    public UserEntity updateUserByID(UUID idUser, @RequestBody @Validated UserUpdateDto userUpdateDto) throws UserNotFoundException, UserNotSavedException {
+    public UserResponseDto updateUserByID(UUID idUser, @RequestBody @Validated UserUpdateDto userUpdateDto) throws UserNotFoundException, UserNotSavedException {
         UserEntity user = this.getOneUserByID(idUser);
         UserEntity userAux = new UserEntity();
 
@@ -93,7 +94,7 @@ public class UserService {
 
         this.saveUser(user);
 
-        return user;
+        return new UserResponseDto(user.getName(), user.getEmail(), user.getID());
     }
 
     public boolean saveUser(UserEntity user){
@@ -103,11 +104,15 @@ public class UserService {
         throw new UserNotSavedException();
     }
 
-    public UserEntity verifyLogin(@RequestBody LoginRequestDto loginRequestDto){
+    public UserResponseDto verifyLogin(@RequestBody LoginRequestDto loginRequestDto){
         Optional<UserEntity> possibleUser = this.userRepository.getUserEntityByEmailAndPassword(loginRequestDto.email(), loginRequestDto.password());
 
         if(possibleUser.isPresent()){
-            return possibleUser.get();
+
+            UserEntity user = possibleUser.get();
+
+            return new UserResponseDto(user.getName(), user.getEmail(), user.getID());
+
         }
         else{
             throw new UserNotFoundException();

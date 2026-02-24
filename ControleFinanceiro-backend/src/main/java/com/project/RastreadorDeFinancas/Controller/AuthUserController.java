@@ -2,8 +2,8 @@ package com.project.RastreadorDeFinancas.Controller;
 
 import com.project.RastreadorDeFinancas.Dtos.Create.CreateUserDto;
 import com.project.RastreadorDeFinancas.Dtos.LoginRequestDto;
+import com.project.RastreadorDeFinancas.Dtos.Response.UserResponseDto;
 import com.project.RastreadorDeFinancas.Dtos.Update.UserUpdateDto;
-import com.project.RastreadorDeFinancas.Entities.UserEntity;
 import com.project.RastreadorDeFinancas.Exceptions.UserNotFoundException;
 import com.project.RastreadorDeFinancas.Exceptions.UserNotSavedException;
 import com.project.RastreadorDeFinancas.Repository.UserRepository;
@@ -33,11 +33,11 @@ public class AuthUserController {
     }
 
     @PostMapping(path = "/login")
-    private ResponseEntity<UserEntity> login(@RequestBody LoginRequestDto loginRequestDto){
+    private ResponseEntity<UserResponseDto> login(@RequestBody LoginRequestDto loginRequestDto){
         try{
-            UserEntity user = userService.verifyLogin(loginRequestDto);
+            UserResponseDto userDto = userService.verifyLogin(loginRequestDto);
 
-            return ResponseEntity.status(HttpStatus.OK).body(user);
+            return ResponseEntity.status(HttpStatus.OK).body(userDto);
         }
         catch(UserNotFoundException e){
 
@@ -46,11 +46,11 @@ public class AuthUserController {
     }
 
     @PostMapping(path = "/cadastro")
-    public ResponseEntity<UserEntity> createNewUser(@RequestBody CreateUserDto createUserDto){
+    public ResponseEntity<UserResponseDto> createNewUser(@RequestBody CreateUserDto createUserDto){
         try{
-            UserEntity newUser = this.userService.createNewUser(createUserDto);
+            UserResponseDto newUserDto = this.userService.createNewUser(createUserDto);
 
-            return ResponseEntity.status(HttpStatus.CREATED).body(newUser);
+            return ResponseEntity.status(HttpStatus.CREATED).body(newUserDto);
 
         }catch(UserNotSavedException e){
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
@@ -58,13 +58,13 @@ public class AuthUserController {
     }
 
     @PutMapping(path = "/update/{id}")
-    public ResponseEntity<UserEntity> updateUser(@PathVariable(value = "id") UUID userID, @RequestBody @Validated UserUpdateDto userUpdateDto){
+    public ResponseEntity<UserResponseDto> updateUser(@PathVariable(value = "id") UUID userID, @RequestBody @Validated UserUpdateDto userUpdateDto){
 
 
         try{
-            UserEntity userUpdated = this.userService.updateUserByID(userID, userUpdateDto);
+            UserResponseDto userUpdatedDto = this.userService.updateUserByID(userID, userUpdateDto);
 
-            return ResponseEntity.status(HttpStatus.OK).body(userUpdated);
+            return ResponseEntity.status(HttpStatus.OK).body(userUpdatedDto);
 
         }catch(Exception e){
             if(e.getClass() == UserNotFoundException.class){

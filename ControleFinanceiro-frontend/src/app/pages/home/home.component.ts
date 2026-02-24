@@ -59,7 +59,7 @@ export class HomeComponent implements OnInit{
 
     if(this.isFormValid(this.userEditForm)){
 
-      this.userService.updateUserInfos(this.userEditForm.value, this.usuarioStorage?.id).subscribe({
+      this.userService.updateUserInfos(this.userEditForm.value, this.usuarioStorage?.idUser).subscribe({
         next: (resposta: any) => {
           alert('Seus dados foram atualizados com sucesso');
 
@@ -79,7 +79,7 @@ export class HomeComponent implements OnInit{
     if(this.categoryForm.valid){
 
       console.log('Passei aq');
-      this.categoryService.criarCategoria(this.categoryForm.value, this.usuarioStorage?.id).subscribe({
+      this.categoryService.criarCategoria(this.categoryForm.value, this.usuarioStorage?.idUser).subscribe({
         next: (resposta: any) => {
           alert('Categoria criada com sucesso!');
 
