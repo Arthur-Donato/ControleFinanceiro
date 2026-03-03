@@ -2,9 +2,11 @@ package com.project.RastreadorDeFinancas.Dtos.Response;
 
 import com.project.RastreadorDeFinancas.Entities.CategoryEntity;
 
-public record CategoryResponseDto(String nameCategory, String nameUser) {
+import java.util.UUID;
+
+public record CategoryResponseDto(String nameCategory, String nameUser, UUID idCateogry) {
 
     public CategoryResponseDto(CategoryEntity categoryEntity){
-        this(categoryEntity.getName(), categoryEntity.getUserEntity().getName());
+        this(categoryEntity.getName(), categoryEntity.getUserEntity().getName(), categoryEntity.getID());
     }
 }

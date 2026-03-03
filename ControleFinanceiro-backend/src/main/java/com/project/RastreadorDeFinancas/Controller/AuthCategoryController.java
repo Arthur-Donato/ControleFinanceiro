@@ -38,9 +38,9 @@ public class AuthCategoryController {
     }
 
     @PostMapping(path = "/add/{id}")
-    public ResponseEntity<CategoryEntity> createNewCategory(@RequestBody CreateCategoryDto createCategoryDto, @PathVariable(value = "id") UUID idUser){
+    public ResponseEntity<CategoryResponseDto> createNewCategory(@RequestBody CreateCategoryDto createCategoryDto, @PathVariable(value = "id") UUID idUser){
         try{
-            CategoryEntity category = this.categoryService.createNewCategory(createCategoryDto, idUser);
+            CategoryResponseDto category = this.categoryService.createNewCategory(createCategoryDto, idUser);
 
             return ResponseEntity.status(HttpStatus.CREATED).body(category);
         } catch(UserNotFoundException | CategoryNotSavedException e ){
@@ -50,13 +50,6 @@ public class AuthCategoryController {
             else{
                 return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
             }
-        }
-    }
-
-    @GetMapping(path = "/get/{id}")
-    public ResponseEntity<CategoryResponseDto> getAllCategories(@PathVariable(value = "id") UUID userID){
-        try{
-
         }
     }
 }

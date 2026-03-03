@@ -12,6 +12,7 @@ import com.project.RastreadorDeFinancas.Services.CategoryService;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -36,11 +37,9 @@ public class CategoryController {
     @PostMapping
     public ResponseEntity<CategoryResponseDto> postCategory(@PathVariable (value = "idUser") UUID idUser, @RequestBody @Validated CreateCategoryDto createCategoryDto){
         try{
-            CategoryEntity category = categoryService.createNewCategory(createCategoryDto, idUser);
+            CategoryResponseDto category = categoryService.createNewCategory(createCategoryDto, idUser);
 
-            CategoryResponseDto categoryResponseDto = new CategoryResponseDto(category);
-
-            return ResponseEntity.status(HttpStatus.OK).body(categoryResponseDto);
+            return ResponseEntity.status(HttpStatus.OK).body(category);
         }
         catch(UserNotFoundException e ){
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
@@ -63,9 +62,9 @@ public class CategoryController {
     }
 
     @GetMapping
-    public ResponseEntity<List<CategoryResponseDto>> getAllCategories(@PathVariable (value = "idUser") UUID idUser){
+    public ResponseEntity<List<EntityModel<CategoryResponseDto>>> getAllCategories(@PathVariable (value = "idUser") UUID idUser){
         try{
-            List<CategoryResponseDto> categoryList = this.categoryService.getAllCategories(idUser).stream().map(CategoryResponseDto::new).toList();
+            List<EntityModel<CategoryResponseDto>> categoryList = this.categoryService.getAllCategories(idUser);
 
             return ResponseEntity.status(HttpStatus.OK).body(categoryList);
         } catch(UserNotFoundException e){
@@ -89,11 +88,9 @@ public class CategoryController {
     @PutMapping(path =  "/{id}")
     public ResponseEntity<CategoryResponseDto> updateCategory(@PathVariable (value = "idUser") UUID idUser, @PathVariable (value = "id") UUID id, @RequestBody @Validated CategoryUpdateDto categoryUpdateDto){
         try{
-            CategoryEntity category = categoryService.updateCategoryByID(idUser, id, categoryUpdateDto);
+            CategoryResponseDto category = categoryService.updateCategoryByID(idUser, id, categoryUpdateDto);
 
-            CategoryResponseDto categoryResponseDto = new CategoryResponseDto(category);
-
-            return ResponseEntity.status(HttpStatus.OK).body(categoryResponseDto);
+            return ResponseEntity.status(HttpStatus.OK).body(category);
         }
         catch(CategoryNotFoundException | UserNotFoundException e){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();

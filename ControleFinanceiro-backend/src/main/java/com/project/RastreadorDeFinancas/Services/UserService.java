@@ -12,6 +12,7 @@ import com.project.RastreadorDeFinancas.Repository.UserRepository;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.BeanUtils;
+import org.springframework.hateoas.EntityModel;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
@@ -44,18 +46,22 @@ public class UserService {
         return new UserResponseDto(newUser.getName(), newUser.getEmail(), newUser.getID());
     }
 
-    public List<UserEntity> getAllUsers() {
+    public List<EntityModel<UserResponseDto>> getAllUsers() {
         List<UserEntity> userList = this.userRepository.findAll();
 
-        if (!userList.isEmpty()) {
-            for (UserEntity user : userList) {
-                user.add(linkTo(methodOn(UserController.class).getOneUserById(user.getID())).withSelfRel());
-            }
-
-            return userList;
-        } else {
+        if(userList.isEmpty()){
             throw new UserNotFoundException();
         }
+
+        return userList.stream().map(entity -> {
+            UserResponseDto userDto = new UserResponseDto(entity);
+
+            EntityModel<UserResponseDto> resource = EntityModel.of(userDto);
+
+            resource.add(linkTo(methodOn(UserController.class).getOneUserById(userDto.idUser())).withSelfRel());
+
+            return resource;
+        }).collect(Collectors.toList());
     }
 
     public UserEntity getOneUserByID(UUID idUser){

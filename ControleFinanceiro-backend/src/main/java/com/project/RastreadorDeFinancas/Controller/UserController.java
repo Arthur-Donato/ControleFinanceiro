@@ -11,6 +11,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -53,9 +54,9 @@ public class    UserController {
     }
 
     @GetMapping
-    public ResponseEntity<List<UserResponseDto>> getAllUsers(){
+    public ResponseEntity<List<EntityModel<UserResponseDto>>> getAllUsers(){
         try{
-            List<UserResponseDto> userList = this.userService.getAllUsers().stream().map(UserResponseDto::new).toList();
+            List<EntityModel<UserResponseDto>> userList = this.userService.getAllUsers();
 
             return ResponseEntity.status(HttpStatus.OK).body(userList);
         } catch(UserNotFoundException e){

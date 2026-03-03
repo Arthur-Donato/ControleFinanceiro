@@ -1,6 +1,8 @@
 package com.project.RastreadorDeFinancas.Services;
 
 import com.project.RastreadorDeFinancas.Controller.CategoryController;
+import com.project.RastreadorDeFinancas.Dtos.Response.CategoryResponseDto;
+import com.project.RastreadorDeFinancas.Dtos.Response.UserResponseDto;
 import com.project.RastreadorDeFinancas.Dtos.Update.CategoryUpdateDto;
 import com.project.RastreadorDeFinancas.Dtos.Create.CreateCategoryDto;
 import com.project.RastreadorDeFinancas.Entities.CategoryEntity;
@@ -14,6 +16,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.EntityModel;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -21,6 +24,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
@@ -47,7 +52,7 @@ public class CategoryService {
         this.userService = new UserService(userRepository);
     }
 
-     public CategoryEntity createNewCategory(@RequestBody @Validated CreateCategoryDto createCategoryDto, UUID idUser) throws UserNotFoundException, CategoryNotSavedException {
+     public CategoryResponseDto createNewCategory(@RequestBody @Validated CreateCategoryDto createCategoryDto, UUID idUser) throws UserNotFoundException, CategoryNotSavedException {
 
          CategoryEntity newCategory = new CategoryEntity();
 
@@ -57,7 +62,7 @@ public class CategoryService {
 
          this.saveCategory(newCategory);
 
-         return newCategory;
+         return new CategoryResponseDto(newCategory);
      }
 
      public void attributeUserEntityToNewCategory(UUID idUser, CategoryEntity newCategory) throws UserNotFoundException{
@@ -66,26 +71,31 @@ public class CategoryService {
         newCategory.setUserEntity(user);
      }
 
-     public List<CategoryEntity> getAllCategories(UUID idUser) throws UserNotFoundException{
-        UserEntity user = this.userService.getOneUserByID(idUser);
+     public List<EntityModel<CategoryResponseDto>> getAllCategories(UUID idUser) throws UserNotFoundException{
+        UserResponseDto user = this.returnUserResponseDto(idUser);
 
-        List<CategoryEntity> categoriesList = this.categoryRepository.findAllByUserID(user.getID());
+        List<CategoryEntity> categoriesList = this.categoryRepository.findAllByUserID(user.idUser());
 
-        if(!categoriesList.isEmpty()){
-            for(CategoryEntity category : categoriesList){
-                category.add(linkTo(methodOn(CategoryController.class).getOneCategoryById(idUser, category.getID())).withSelfRel());
-            }
-
-            return categoriesList;
-        }else{
-            throw new CategoryNotFoundException();
+        if(categoriesList.isEmpty()){
+            throw new UserNotFoundException();
         }
+
+        return categoriesList.stream().map(category -> {
+            CategoryResponseDto categoryResponseDto = new CategoryResponseDto(category);
+
+            EntityModel<CategoryResponseDto> resource = EntityModel.of(categoryResponseDto);
+
+            resource.add(linkTo(methodOn(CategoryController.class).getOneCategoryById(user.idUser(), categoryResponseDto.idCateogry())).withSelfRel());
+
+            return resource;
+
+        }).collect(Collectors.toList());
      }
 
     public CategoryEntity getOneCategoryByID(UUID idUser, UUID idCategory) throws CategoryNotFoundException, UserNotFoundException{
-        UserEntity user = this.userService.getOneUserByID(idUser);
+        UserResponseDto user = this.returnUserResponseDto(idUser);
 
-        Optional<CategoryEntity> category = this.categoryRepository.findByUserEntityAndID(user.getID(), idCategory);
+        Optional<CategoryEntity> category = this.categoryRepository.findByUserEntityAndID(user.idUser(), idCategory);
 
         if(category.isPresent()){
             category.get().add(linkTo(methodOn(CategoryController.class).getAllCategories(idUser)).withSelfRel());
@@ -103,7 +113,7 @@ public class CategoryService {
          this.categoryRepository.delete(category);
      }
 
-     public CategoryEntity updateCategoryByID(UUID idUser, UUID idCategory, @RequestBody @Validated CategoryUpdateDto categoryUpdateDto) throws CategoryNotFoundException, CategoryNotSavedException, UserNotFoundException{
+     public CategoryResponseDto updateCategoryByID(UUID idUser, UUID idCategory, @RequestBody @Validated CategoryUpdateDto categoryUpdateDto) throws CategoryNotFoundException, CategoryNotSavedException, UserNotFoundException{
         CategoryEntity category = getOneCategoryByID(idUser,idCategory);
 
         CategoryEntity categoryAux = new CategoryEntity();
@@ -114,7 +124,7 @@ public class CategoryService {
 
         this.saveCategory(category);
 
-        return category;
+        return new CategoryResponseDto(category);
      }
 
      public boolean saveCategory(CategoryEntity category) {
@@ -122,5 +132,12 @@ public class CategoryService {
             return true;
         }
         throw new CategoryNotSavedException();
+     }
+
+     public UserResponseDto returnUserResponseDto(UUID userID) throws UserNotFoundException{
+        UserEntity user = this.userService.getOneUserByID(userID);
+
+        return new UserResponseDto(user);
+
      }
 }
