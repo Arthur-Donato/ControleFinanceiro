@@ -13,7 +13,7 @@ import java.util.UUID;
 
 @Repository
 public interface TransactionRepository extends JpaRepository<TransactionEntity, UUID> {
-    List<TransactionEntity> findAllByUserID(UUID isUser);
+    List<TransactionEntity> findTransactionEntitiesByUserEntity_ID(UUID userEntityID);
     List<TransactionEntity> findAllByUserEntity(UserEntity userEntity);
 
     @Query(value = "SELECT * FROM TB_TRANSACTION t WHERE t.user_ID = :userID AND t.ID = :id", nativeQuery = true)

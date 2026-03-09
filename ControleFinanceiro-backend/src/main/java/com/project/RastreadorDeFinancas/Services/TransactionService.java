@@ -82,7 +82,7 @@ public class TransactionService {
     public List<EntityModel<TransactionResponseDto>> getAllTransactions(UUID idUser) throws UserNotFoundException {
         UserResponseDto user = this.returnUserResponseDto(idUser);
 
-        List<TransactionEntity> transactionList = this.transactionRepository.findAllByUserID(user.idUser());
+        List<TransactionEntity> transactionList = this.transactionRepository.findTransactionEntitiesByUserEntity_ID(user.idUser());
 
         if(transactionList.isEmpty()){
             throw new UserNotFoundException();
@@ -100,7 +100,7 @@ public class TransactionService {
 
     }
 
-    public TransactionEntity getOneTransactionByID(UUID idUser, UUID idTransaction) throws UserNotFoundException {
+    private TransactionEntity getOneTransactionEntityByID(UUID idUser, UUID idTransaction) throws UserNotFoundException {
         UserEntity user = userService.getOneUserByID(idUser);
 
         Optional<TransactionEntity> transaction = this.transactionRepository.findByUserEntityAndID(user.getID(), idTransaction);
@@ -114,15 +114,27 @@ public class TransactionService {
 
     }
 
+    public TransactionResponseDto getOneTransactionResponseByID(UUID idUser, UUID idTransaction) throws UserNotFoundException{
+        UserEntity user = userService.getOneUserByID(idUser);
+
+        Optional<TransactionEntity> transactionOptional = this.transactionRepository.findByUserEntityAndID(user.getID(), idTransaction);
+
+        if(transactionOptional.isPresent()){
+            return new TransactionResponseDto(transactionOptional.get());
+        }
+
+        throw new TransactionNotFoundException();
+    }
+
     public void deleteTransactionByID(UUID idUser, UUID idTransaction) throws UserNotFoundException, TransactionNotFoundException{
-        TransactionEntity transaction = this.getOneTransactionByID(idUser, idTransaction);
+        TransactionEntity transaction = this.getOneTransactionEntityByID(idUser, idTransaction);
 
 
         this.transactionRepository.deleteById(idTransaction);
     }
 
     public TransactionResponseDto updateTransactionByID(UUID idUser, UUID idTransaction, @RequestBody @Validated TransactionUpdateDto transactionUpdateDto) throws UserNotFoundException, TransactionNotFoundException, TransactionNotSavedException{
-        TransactionEntity transaction = this.getOneTransactionByID(idUser, idTransaction);
+        TransactionEntity transaction = this.getOneTransactionEntityByID(idUser, idTransaction);
 
         TransactionEntity transactionAux = new TransactionEntity();
 

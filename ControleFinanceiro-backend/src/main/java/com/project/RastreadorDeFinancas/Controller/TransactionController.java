@@ -3,7 +3,6 @@ package com.project.RastreadorDeFinancas.Controller;
 import com.project.RastreadorDeFinancas.Dtos.Create.CreateTransactionDto;
 import com.project.RastreadorDeFinancas.Dtos.Response.TransactionResponseDto;
 import com.project.RastreadorDeFinancas.Dtos.Update.TransactionUpdateDto;
-import com.project.RastreadorDeFinancas.Entities.TransactionEntity;
 import com.project.RastreadorDeFinancas.Exceptions.TransactionNotFoundException;
 import com.project.RastreadorDeFinancas.Exceptions.UserNotFoundException;
 import com.project.RastreadorDeFinancas.Repository.CategoryRepository;
@@ -45,11 +44,9 @@ public class TransactionController {
     @GetMapping(path = "/{idTransaction}")
     public ResponseEntity<TransactionResponseDto> getOneTransactionById(@PathVariable (value = "idUser") UUID idUser, @PathVariable (value = "idTransaction") UUID idTransaction){
         try{
-            TransactionEntity transaction = this.transactionService.getOneTransactionByID(idUser, idTransaction);
+            TransactionResponseDto transaction = this.transactionService.getOneTransactionResponseByID(idUser, idTransaction);
 
-            TransactionResponseDto transactionResponseDto = new TransactionResponseDto(transaction);
-
-            return ResponseEntity.status(HttpStatus.OK).body(transactionResponseDto);
+            return ResponseEntity.status(HttpStatus.OK).body(transaction);
         }
         catch(TransactionNotFoundException e){
 
