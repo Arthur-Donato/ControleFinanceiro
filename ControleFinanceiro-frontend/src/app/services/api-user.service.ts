@@ -21,7 +21,7 @@ export class ApiUserService {
   }
 
   updateUserInfos(dadosUpdate: any, userID: any): Observable<any> {
-    console.log("cheguei aqui");
+    console.log("Enviando os seguintes dados de update: ", dadosUpdate);
     return this.http.put(`${this.apiUrl}/update/${userID}`, dadosUpdate, {responseType: 'text' as 'json'});
   }
   

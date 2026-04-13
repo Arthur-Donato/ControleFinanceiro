@@ -1,16 +1,15 @@
 package com.project.RastreadorDeFinancas.Controller;
 
-import com.project.RastreadorDeFinancas.Dtos.Create.CreateUserDto;
+import com.project.RastreadorDeFinancas.Dtos.User.CreateUserDto;
 import com.project.RastreadorDeFinancas.Dtos.LoginRequestDto;
-import com.project.RastreadorDeFinancas.Dtos.Response.UserResponseDto;
-import com.project.RastreadorDeFinancas.Dtos.Update.UserUpdateDto;
+import com.project.RastreadorDeFinancas.Dtos.User.UserResponseDto;
+import com.project.RastreadorDeFinancas.Dtos.User.UserUpdateDto;
 import com.project.RastreadorDeFinancas.Exceptions.UserNotFoundException;
 import com.project.RastreadorDeFinancas.Exceptions.UserNotSavedException;
-import com.project.RastreadorDeFinancas.Repository.UserRepository;
 import com.project.RastreadorDeFinancas.Services.UserService;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -21,16 +20,11 @@ import java.util.UUID;
 @RestController
 @RequestMapping(path = "/auth")
 @CrossOrigin(origins = "*")
+@RequiredArgsConstructor
 public class AuthUserController {
 
     @Getter
-    @Setter
-    private UserService userService;
-
-    @Autowired
-    public AuthUserController(UserRepository userRepository){
-        this.userService = new UserService(userRepository);
-    }
+    private final UserService userService;
 
     @PostMapping(path = "/login")
     private ResponseEntity<UserResponseDto> login(@RequestBody LoginRequestDto loginRequestDto){
@@ -59,7 +53,6 @@ public class AuthUserController {
 
     @PutMapping(path = "/update/{id}")
     public ResponseEntity<UserResponseDto> updateUser(@PathVariable(value = "id") UUID userID, @RequestBody @Validated UserUpdateDto userUpdateDto){
-
 
         try{
             UserResponseDto userUpdatedDto = this.userService.updateUserByID(userID, userUpdateDto);

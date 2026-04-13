@@ -1,7 +1,7 @@
-package com.project.RastreadorDeFinancas.Service;
+package com.project.RastreadorDeFinancas.Services;
 
-import com.project.RastreadorDeFinancas.Dtos.Create.CreateTransactionDto;
-import com.project.RastreadorDeFinancas.Dtos.Update.TransactionUpdateDto;
+import com.project.RastreadorDeFinancas.Dtos.Transaction.CreateTransactionDto;
+import com.project.RastreadorDeFinancas.Dtos.Transaction.TransactionUpdateDto;
 import com.project.RastreadorDeFinancas.Entities.CategoryEntity;
 import com.project.RastreadorDeFinancas.Entities.TransactionEntity;
 import com.project.RastreadorDeFinancas.Entities.UserEntity;
@@ -10,9 +10,6 @@ import com.project.RastreadorDeFinancas.Exceptions.TransactionNotFoundException;
 import com.project.RastreadorDeFinancas.Exceptions.TransactionNotSavedException;
 import com.project.RastreadorDeFinancas.Exceptions.UserNotFoundException;
 import com.project.RastreadorDeFinancas.Repository.TransactionRepository;
-import com.project.RastreadorDeFinancas.Services.CategoryService;
-import com.project.RastreadorDeFinancas.Services.TransactionService;
-import com.project.RastreadorDeFinancas.Services.UserService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

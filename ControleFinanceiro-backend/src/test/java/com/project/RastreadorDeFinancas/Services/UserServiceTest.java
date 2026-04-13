@@ -1,13 +1,12 @@
-package com.project.RastreadorDeFinancas.Service;
+package com.project.RastreadorDeFinancas.Services;
 
 
-import com.project.RastreadorDeFinancas.Dtos.Create.CreateUserDto;
-import com.project.RastreadorDeFinancas.Dtos.Update.UserUpdateDto;
+import com.project.RastreadorDeFinancas.Dtos.User.CreateUserDto;
+import com.project.RastreadorDeFinancas.Dtos.User.UserUpdateDto;
 import com.project.RastreadorDeFinancas.Entities.UserEntity;
 import com.project.RastreadorDeFinancas.Exceptions.UserNotFoundException;
 import com.project.RastreadorDeFinancas.Exceptions.UserNotSavedException;
 import com.project.RastreadorDeFinancas.Repository.UserRepository;
-import com.project.RastreadorDeFinancas.Services.UserService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

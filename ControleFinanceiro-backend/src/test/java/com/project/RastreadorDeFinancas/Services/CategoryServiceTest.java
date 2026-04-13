@@ -1,15 +1,13 @@
-package com.project.RastreadorDeFinancas.Service;
+package com.project.RastreadorDeFinancas.Services;
 
-import com.project.RastreadorDeFinancas.Dtos.Update.CategoryUpdateDto;
-import com.project.RastreadorDeFinancas.Dtos.Create.CreateCategoryDto;
+import com.project.RastreadorDeFinancas.Dtos.Category.CategoryUpdateDto;
+import com.project.RastreadorDeFinancas.Dtos.Category.CreateCategoryDto;
 import com.project.RastreadorDeFinancas.Entities.CategoryEntity;
 import com.project.RastreadorDeFinancas.Entities.UserEntity;
 import com.project.RastreadorDeFinancas.Exceptions.CategoryNotFoundException;
 import com.project.RastreadorDeFinancas.Exceptions.CategoryNotSavedException;
 import com.project.RastreadorDeFinancas.Exceptions.UserNotFoundException;
 import com.project.RastreadorDeFinancas.Repository.CategoryRepository;
-import com.project.RastreadorDeFinancas.Services.CategoryService;
-import com.project.RastreadorDeFinancas.Services.UserService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

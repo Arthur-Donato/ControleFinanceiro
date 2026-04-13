@@ -77,13 +77,9 @@ export class HomeComponent implements OnInit{
     console.log(this.categoryForm.value);
 
     if(this.categoryForm.valid){
-
-      console.log('Passei aq');
       this.categoryService.criarCategoria(this.categoryForm.value, this.usuarioStorage?.idUser).subscribe({
         next: (resposta: any) => {
           alert('Categoria criada com sucesso!');
-
-          this.fecharModal();
         },
 
         error: (erro: any) => {
@@ -91,6 +87,8 @@ export class HomeComponent implements OnInit{
         }
       });
     }
+
+    this.fecharModal();
   }
 
   isFormValid(form: FormGroup){

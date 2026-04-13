@@ -1,16 +1,16 @@
 package com.project.RastreadorDeFinancas.Services;
 
 import com.project.RastreadorDeFinancas.Controller.UserController;
-import com.project.RastreadorDeFinancas.Dtos.Create.CreateUserDto;
+import com.project.RastreadorDeFinancas.Dtos.User.CreateUserDto;
 import com.project.RastreadorDeFinancas.Dtos.LoginRequestDto;
-import com.project.RastreadorDeFinancas.Dtos.Response.UserResponseDto;
-import com.project.RastreadorDeFinancas.Dtos.Update.UserUpdateDto;
+import com.project.RastreadorDeFinancas.Dtos.User.UserResponseDto;
+import com.project.RastreadorDeFinancas.Dtos.User.UserUpdateDto;
 import com.project.RastreadorDeFinancas.Entities.UserEntity;
 import com.project.RastreadorDeFinancas.Exceptions.UserNotFoundException;
 import com.project.RastreadorDeFinancas.Exceptions.UserNotSavedException;
 import com.project.RastreadorDeFinancas.Repository.UserRepository;
 import lombok.Getter;
-import lombok.Setter;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.stereotype.Service;
@@ -26,15 +26,11 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Service
+@RequiredArgsConstructor
 public class UserService {
 
-    @Setter
     @Getter
-    private UserRepository userRepository;
-
-    public UserService(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
+    private final UserRepository userRepository;
 
     public UserResponseDto createNewUser(@RequestBody @Validated CreateUserDto createUserDto) throws UserNotSavedException{
         UserEntity newUser = new UserEntity();
@@ -64,7 +60,11 @@ public class UserService {
         }).collect(Collectors.toList());
     }
 
-    public UserEntity getOneUserByID(UUID idUser){
+
+    public UserEntity getUserByID(UUID idUser){
+        return this.getOneUserByID(idUser);
+    }
+    protected UserEntity getOneUserByID(UUID idUser){
         Optional<UserEntity> possibleUser = this.userRepository.findById(idUser);
 
         if(possibleUser.isPresent()){
@@ -96,6 +96,10 @@ public class UserService {
 
         if(!(userAux.getEmail().isEmpty())){
             user.setEmail(userAux.getEmail());
+        }
+
+        if(!userAux.getPassword().isEmpty()){
+            user.setPassword(userAux.getPassword());
         }
 
         this.saveUser(user);

@@ -1,17 +1,15 @@
 package com.project.RastreadorDeFinancas.Controller;
 
-import com.project.RastreadorDeFinancas.Dtos.Create.CreateTransactionDto;
-import com.project.RastreadorDeFinancas.Dtos.Response.TransactionResponseDto;
-import com.project.RastreadorDeFinancas.Dtos.Update.TransactionUpdateDto;
+import com.project.RastreadorDeFinancas.Dtos.Transaction.CreateTransactionDto;
+import com.project.RastreadorDeFinancas.Dtos.Transaction.TransactionResponseDto;
+import com.project.RastreadorDeFinancas.Dtos.Transaction.TransactionUpdateDto;
+import com.project.RastreadorDeFinancas.Entities.TransactionEntity;
 import com.project.RastreadorDeFinancas.Exceptions.TransactionNotFoundException;
 import com.project.RastreadorDeFinancas.Exceptions.UserNotFoundException;
-import com.project.RastreadorDeFinancas.Repository.CategoryRepository;
-import com.project.RastreadorDeFinancas.Repository.TransactionRepository;
-import com.project.RastreadorDeFinancas.Repository.UserRepository;
 import com.project.RastreadorDeFinancas.Services.TransactionService;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,16 +21,11 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping(path = "/transaction/{idUser}")
+@RequiredArgsConstructor
 public class TransactionController {
 
-    @Setter
     @Getter
-    private TransactionService transactionService;
-
-    @Autowired
-    public TransactionController(UserRepository userRepository, CategoryRepository categoryRepository, TransactionRepository transactionRepository){
-        this.transactionService = new TransactionService(userRepository, categoryRepository, transactionRepository);
-    }
+    private final TransactionService transactionService;
 
     @PostMapping(path = "/{idCategory}")
     public ResponseEntity<TransactionResponseDto> postTransaction(@RequestBody @Validated CreateTransactionDto createTransactionDto, @PathVariable (value = "idUser") UUID idUser, @PathVariable (value = "idCategory") UUID idCategory){
@@ -44,9 +37,11 @@ public class TransactionController {
     @GetMapping(path = "/{idTransaction}")
     public ResponseEntity<TransactionResponseDto> getOneTransactionById(@PathVariable (value = "idUser") UUID idUser, @PathVariable (value = "idTransaction") UUID idTransaction){
         try{
-            TransactionResponseDto transaction = this.transactionService.getOneTransactionResponseByID(idUser, idTransaction);
+            TransactionEntity transaction = this.transactionService.getTransactionEntityByID(idUser, idTransaction);
 
-            return ResponseEntity.status(HttpStatus.OK).body(transaction);
+            TransactionResponseDto transactionResponseDto = new TransactionResponseDto(transaction);
+
+            return ResponseEntity.status(HttpStatus.OK).body(transactionResponseDto);
         }
         catch(TransactionNotFoundException e){
 

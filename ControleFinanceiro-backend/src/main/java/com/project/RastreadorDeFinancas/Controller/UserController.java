@@ -1,15 +1,13 @@
 package com.project.RastreadorDeFinancas.Controller;
 
-import com.project.RastreadorDeFinancas.Dtos.Create.CreateUserDto;
-import com.project.RastreadorDeFinancas.Dtos.Response.UserResponseDto;
-import com.project.RastreadorDeFinancas.Dtos.Update.UserUpdateDto;
+import com.project.RastreadorDeFinancas.Dtos.User.CreateUserDto;
+import com.project.RastreadorDeFinancas.Dtos.User.UserResponseDto;
+import com.project.RastreadorDeFinancas.Dtos.User.UserUpdateDto;
 import com.project.RastreadorDeFinancas.Entities.UserEntity;
 import com.project.RastreadorDeFinancas.Exceptions.UserNotFoundException;
-import com.project.RastreadorDeFinancas.Repository.UserRepository;
 import com.project.RastreadorDeFinancas.Services.UserService;
 import lombok.Getter;
-import lombok.Setter;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 
 import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpStatus;
@@ -22,16 +20,11 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/user")
-public class    UserController {
-    
-    @Setter
-    @Getter
-    private UserService userService;
+@RequiredArgsConstructor
+public class UserController {
 
-    @Autowired
-    public UserController(UserRepository userRepository){
-        this.userService = new UserService(userRepository);
-    }
+    @Getter
+    private final UserService userService;
 
     @PostMapping
     public ResponseEntity<UserResponseDto> postUser(@RequestBody @Validated CreateUserDto createUserDto){
@@ -43,7 +36,7 @@ public class    UserController {
     @GetMapping(path = "/{id}")
     public ResponseEntity<UserResponseDto> getOneUserById(@PathVariable(value = "id") UUID id){
         try{
-            UserEntity user = this.userService.getOneUserByID(id);
+            UserEntity user = this.userService.getUserByID(id);
 
             UserResponseDto userResponseDto = new UserResponseDto(user);
 

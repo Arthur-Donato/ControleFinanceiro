@@ -1,17 +1,15 @@
 package com.project.RastreadorDeFinancas.Controller;
 
-import com.project.RastreadorDeFinancas.Dtos.Response.CategoryResponseDto;
-import com.project.RastreadorDeFinancas.Dtos.Update.CategoryUpdateDto;
-import com.project.RastreadorDeFinancas.Dtos.Create.CreateCategoryDto;
+import com.project.RastreadorDeFinancas.Dtos.Category.CategoryResponseDto;
+import com.project.RastreadorDeFinancas.Dtos.Category.CategoryUpdateDto;
+import com.project.RastreadorDeFinancas.Dtos.Category.CreateCategoryDto;
 import com.project.RastreadorDeFinancas.Entities.CategoryEntity;
 import com.project.RastreadorDeFinancas.Exceptions.CategoryNotFoundException;
 import com.project.RastreadorDeFinancas.Exceptions.UserNotFoundException;
-import com.project.RastreadorDeFinancas.Repository.CategoryRepository;
-import com.project.RastreadorDeFinancas.Repository.UserRepository;
 import com.project.RastreadorDeFinancas.Services.CategoryService;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,16 +21,11 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping(path = "/category/{idUser}")
+@RequiredArgsConstructor
 public class CategoryController {
 
-    @Setter
     @Getter
-    private CategoryService categoryService;
-
-    @Autowired
-    public CategoryController(CategoryRepository categoryRepository, UserRepository userRepository){
-        this.categoryService = new CategoryService(userRepository, categoryRepository);
-    }
+    private final CategoryService categoryService;
 
     @PostMapping
     public ResponseEntity<CategoryResponseDto> postCategory(@PathVariable (value = "idUser") UUID idUser, @RequestBody @Validated CreateCategoryDto createCategoryDto){
@@ -49,7 +42,7 @@ public class CategoryController {
     @GetMapping(path = "/{id}")
     public ResponseEntity<CategoryResponseDto> getOneCategoryById(@PathVariable(value = "idUser") UUID idUser, @PathVariable (value = "id") UUID id){
         try{
-            CategoryEntity category = categoryService.getOneCategoryByID(idUser, id);
+            CategoryEntity category = categoryService.getCategoryByID(idUser, id);
 
             CategoryResponseDto categoryResponseDto = new CategoryResponseDto(category);
 

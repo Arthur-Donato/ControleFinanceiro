@@ -1,21 +1,20 @@
 package com.project.RastreadorDeFinancas.Services;
 
 import com.project.RastreadorDeFinancas.Controller.CategoryController;
-import com.project.RastreadorDeFinancas.Dtos.Response.CategoryResponseDto;
-import com.project.RastreadorDeFinancas.Dtos.Response.UserResponseDto;
-import com.project.RastreadorDeFinancas.Dtos.Update.CategoryUpdateDto;
-import com.project.RastreadorDeFinancas.Dtos.Create.CreateCategoryDto;
+import com.project.RastreadorDeFinancas.Dtos.Category.CategoryResponseDto;
+import com.project.RastreadorDeFinancas.Dtos.User.UserResponseDto;
+import com.project.RastreadorDeFinancas.Dtos.Category.CategoryUpdateDto;
+import com.project.RastreadorDeFinancas.Dtos.Category.CreateCategoryDto;
 import com.project.RastreadorDeFinancas.Entities.CategoryEntity;
 import com.project.RastreadorDeFinancas.Entities.UserEntity;
 import com.project.RastreadorDeFinancas.Exceptions.CategoryNotFoundException;
 import com.project.RastreadorDeFinancas.Exceptions.CategoryNotSavedException;
 import com.project.RastreadorDeFinancas.Exceptions.UserNotFoundException;
 import com.project.RastreadorDeFinancas.Repository.CategoryRepository;
-import com.project.RastreadorDeFinancas.Repository.UserRepository;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
@@ -24,33 +23,20 @@ import org.springframework.web.bind.annotation.RequestBody;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Service
+@RequiredArgsConstructor
 public class CategoryService {
 
-    @Setter
     @Getter
-    private UserRepository userRepository;
+    private final CategoryRepository categoryRepository;
 
-    @Setter
     @Getter
-    private CategoryRepository categoryRepository;
-
-    @Setter
-    @Getter
-    private UserService userService;
-
-    @Autowired
-    public CategoryService(UserRepository userRepository, CategoryRepository categoryRepository){
-        this.userRepository = userRepository;
-        this.categoryRepository = categoryRepository;
-        this.userService = new UserService(userRepository);
-    }
+    private final UserService userService;
 
      public CategoryResponseDto createNewCategory(@RequestBody @Validated CreateCategoryDto createCategoryDto, UUID idUser) throws UserNotFoundException, CategoryNotSavedException {
 
@@ -92,7 +78,11 @@ public class CategoryService {
         }).collect(Collectors.toList());
      }
 
-    public CategoryEntity getOneCategoryByID(UUID idUser, UUID idCategory) throws CategoryNotFoundException, UserNotFoundException{
+     public CategoryEntity getCategoryByID(UUID idUser, UUID idCategory) throws CategoryNotFoundException, UserNotFoundException{
+         return getOneCategoryByID(idUser, idCategory);
+     }
+
+    protected CategoryEntity getOneCategoryByID(UUID idUser, UUID idCategory) throws CategoryNotFoundException, UserNotFoundException{
         UserResponseDto user = this.returnUserResponseDto(idUser);
 
         Optional<CategoryEntity> category = this.categoryRepository.findByUserEntityAndID(user.idUser(), idCategory);

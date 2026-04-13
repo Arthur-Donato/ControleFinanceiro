@@ -1,19 +1,17 @@
 package com.project.RastreadorDeFinancas.Services;
 
 import com.project.RastreadorDeFinancas.Controller.TransactionController;
-import com.project.RastreadorDeFinancas.Dtos.Create.CreateTransactionDto;
-import com.project.RastreadorDeFinancas.Dtos.Response.TransactionResponseDto;
-import com.project.RastreadorDeFinancas.Dtos.Response.UserResponseDto;
-import com.project.RastreadorDeFinancas.Dtos.Update.TransactionUpdateDto;
+import com.project.RastreadorDeFinancas.Dtos.Transaction.CreateTransactionDto;
+import com.project.RastreadorDeFinancas.Dtos.Transaction.TransactionResponseDto;
+import com.project.RastreadorDeFinancas.Dtos.User.UserResponseDto;
+import com.project.RastreadorDeFinancas.Dtos.Transaction.TransactionUpdateDto;
 import com.project.RastreadorDeFinancas.Entities.CategoryEntity;
 import com.project.RastreadorDeFinancas.Entities.TransactionEntity;
 import com.project.RastreadorDeFinancas.Entities.UserEntity;
 import com.project.RastreadorDeFinancas.Exceptions.*;
-import com.project.RastreadorDeFinancas.Repository.CategoryRepository;
 import com.project.RastreadorDeFinancas.Repository.TransactionRepository;
-import com.project.RastreadorDeFinancas.Repository.UserRepository;
 import lombok.Getter;
-import lombok.Setter;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.stereotype.Service;
@@ -28,36 +26,17 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Service
+@RequiredArgsConstructor
 public class TransactionService {
 
-    @Setter
     @Getter
-    private UserRepository userRepository;
+    private final TransactionRepository transactionRepository;
 
-    @Setter
     @Getter
-    private CategoryRepository categoryRepository;
+    private final UserService userService;
 
-    @Setter
     @Getter
-    private TransactionRepository transactionRepository;
-
-    @Setter
-    @Getter
-    private UserService userService;
-
-    @Setter
-    @Getter
-    private CategoryService categoryService;
-
-
-    public TransactionService(UserRepository userRepository, CategoryRepository categoryRepository, TransactionRepository transactionRepository) {
-        this.userRepository = userRepository;
-        this.categoryRepository = categoryRepository;
-        this.transactionRepository = transactionRepository;
-        this.userService = new UserService(userRepository);
-        this.categoryService = new CategoryService(userRepository, categoryRepository);
-    }
+    private final CategoryService categoryService;
 
     public TransactionResponseDto createNewTransaction(@RequestBody @Validated CreateTransactionDto createTransactionDto, UUID idUser, UUID idCategory) throws UserNotFoundException, CategoryNotFoundException{
         TransactionEntity newTransaction = new TransactionEntity();
@@ -100,7 +79,11 @@ public class TransactionService {
 
     }
 
-    private TransactionEntity getOneTransactionEntityByID(UUID idUser, UUID idTransaction) throws UserNotFoundException {
+    public TransactionEntity getTransactionEntityByID(UUID idUser, UUID idTransaction) throws UserNotFoundException{
+        return getOneTransactionEntityByID(idUser, idTransaction);
+    }
+
+    protected TransactionEntity getOneTransactionEntityByID(UUID idUser, UUID idTransaction) throws UserNotFoundException {
         UserEntity user = userService.getOneUserByID(idUser);
 
         Optional<TransactionEntity> transaction = this.transactionRepository.findByUserEntityAndID(user.getID(), idTransaction);
