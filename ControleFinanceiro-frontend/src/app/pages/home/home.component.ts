@@ -14,10 +14,11 @@ import { UsuarioInterface } from '../../interfaces/usuario';
   templateUrl: './home.component.html',
   styleUrl: './home.component.css',
 })
-export class HomeComponent implements OnInit{
+export class HomeComponent implements OnInit {
   usuarioStorage: UsuarioInterface | null = null;
   userEditForm: FormGroup;
   categoryForm: FormGroup;
+  receitaForm: FormGroup;
 
   exibirModal = false;
   tipoModal: 'usuario' | 'receita' | 'despesa' | 'categoria' = 'usuario';
@@ -28,15 +29,22 @@ export class HomeComponent implements OnInit{
     private userService: ApiUserService,
     private categoryService: ApiCategoryService,
     private router: Router
-  ){
+  ) {
     this.userEditForm = this.fb.group({
       name: ['', [Validators.minLength(3), Validators.pattern(/^[a-zA-ZÀ-ÿ]+\s+[a-zA-ZÀ-ÿ]+.*$/)]],
       email: ['', [Validators.email]],
       password: ['', [Validators.minLength(5)]]
-  }),
-    this.categoryForm = this.fb.group({
-      name: ['', []]
-    })
+    }),
+      this.categoryForm = this.fb.group({
+        name: ['', []]
+      }),
+      this.receitaForm = this.fb.group({
+        type: [],
+        name: [],
+        value: [],
+        date: [],
+        category: [],
+      })
   }
 
   ngOnInit() {
@@ -46,18 +54,30 @@ export class HomeComponent implements OnInit{
     console.log('O tipo de usuarioStorage é', typeof this.usuarioStorage);
   }
 
-  abrirModal(tipo: 'usuario' | 'receita' | 'despesa' | 'categoria'){
+  abrirModal(tipo: 'usuario' | 'receita' | 'despesa' | 'categoria') {
     this.tipoModal = tipo;
     this.exibirModal = true;
+
+    if (tipo == 'usuario') {
+      this.userEditForm.reset();
+    }
+    else if (tipo == 'receita') {
+      this.receitaForm.reset();
+    }
+    else if (tipo == 'categoria') {
+      this.categoryForm.reset();
+    }
   }
 
-  fecharModal(){
+  fecharModal() {
     this.exibirModal = false;
+
+
   }
 
-  onSubmitUserForm(){
+  onSubmitUserForm() {
 
-    if(this.isFormValid(this.userEditForm)){
+    if (this.isFormValid(this.userEditForm)) {
 
       this.userService.updateUserInfos(this.userEditForm.value, this.usuarioStorage?.idUser).subscribe({
         next: (resposta: any) => {
@@ -68,15 +88,15 @@ export class HomeComponent implements OnInit{
         error: (erro: any) => {
           alert('Ocorreu um erro ao atualizar seus dados');
         }
-      }); 
+      });
     }
   }
 
-  onSubmitCategoryForm(){
+  onSubmitCategoryForm() {
 
     console.log(this.categoryForm.value);
 
-    if(this.categoryForm.valid){
+    if (this.categoryForm.valid) {
       this.categoryService.criarCategoria(this.categoryForm.value, this.usuarioStorage?.idUser).subscribe({
         next: (resposta: any) => {
           alert('Categoria criada com sucesso!');
@@ -91,11 +111,11 @@ export class HomeComponent implements OnInit{
     this.fecharModal();
   }
 
-  isFormValid(form: FormGroup){
+  isFormValid(form: FormGroup) {
     return form.valid;
   }
 
-  logOut(){
+  logOut() {
     this.authService.logout();
 
     this.router.navigate(['/login']);

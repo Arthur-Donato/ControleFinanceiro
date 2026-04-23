@@ -2,39 +2,44 @@
   display: flex;
   flex-direction: column;
   height: 100vh;
-  background-color: #ffffff;
+  background-color: #0F172A;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .cadastro-titulo{
   text-align: center;
-  background-color: #d9d9d9;
+  background-color: #1E293B;
   height: 75px;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  cursor: default;
 }
 
 .cadastro-card {
   justify-content: center;
   align-items: center;
-  background-color: #d9d9d9;
+  background-color: #1E293B;
   padding: 2.5rem;
   border-radius: 12px;
   box-shadow: 0 8px 24px rgba(0,0,0,0.1);
   width: 100%;
   max-width: 400px;
   text-align: center;
+  cursor: default;
 
   margin: auto;
 }
 
+h1{
+  color:#F8FAFC;
+}
 
 h2 {
-  color: #333;
+  color: #F8FAFC;
   margin-bottom: 0.5rem;
 }
 
 .subtitle {
-  color: #666;
+  color: #94A3B8;
   margin-bottom: 2rem;
   font-size: 0.9rem;
 }
@@ -47,7 +52,7 @@ h2 {
 label {
   display: block;
   margin-bottom: 0.5rem;
-  color: #555;
+  color: #64748B;
   font-weight: 500;
   font-size: 0.9rem;
 }
@@ -55,7 +60,7 @@ label {
 input {
   width: 100%;
   padding: 12px;
-  border: 1px solid #ddd;
+  border: 1px solid #F8FAFC;
   border-radius: 6px;
   font-size: 1rem;
   box-sizing: border-box; 
@@ -63,7 +68,7 @@ input {
 }
 
 input:focus {
-  border-color: #007bff;
+  border-color: #6366F1;
   outline: none;
 }
 
@@ -74,7 +79,7 @@ input.invalid {
 button {
   width: 100%;
   padding: 12px;
-  background-color: #007bff;
+  background-color: #6366F1;
   color: white;
   border: none;
   border-radius: 6px;
@@ -86,7 +91,7 @@ button {
 }
 
 button:hover {
-  background-color: #0056b3;
+  background-color: #6366F1;
 }
 
 button:disabled {
